@@ -312,15 +312,15 @@ const int N = 1e5+10;
 const int LOGN = 17;
 ll bit[N];
 
-ll prefix(int idx) {
+ll qry(int idx) {
 	ll sum = 0;
 	for(int i=idx; i; i -= i&-i) sum += bit[i];
 	return sum;
 }
-void add(int idx, ll k){
+void upd(int idx, ll k){
 	for(int i=idx; i<N; i += i&-i) bit[i] += k;
 }
-int lowerb_prefix(ll v){
+int prefix(ll v){ // lower bound search
 	ll sum = 0; int pos = 0;
 	for(int i=LOGN; i>=0; i--)
 		if(pos + (1 << i) < N && sum + bit[pos + (1 << i)] < v){
