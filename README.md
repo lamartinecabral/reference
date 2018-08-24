@@ -1568,7 +1568,7 @@ fi
 #include <stack>
 #include <array>
 #include <cmath> //sqrt, sin
-#include <time>
+#include <ctime>
 #include <map>
 #include <set>
 //*/
