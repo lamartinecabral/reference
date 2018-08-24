@@ -513,7 +513,7 @@ ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s
 
 # BIT Variations
 
-### BIT Range Update Range Query
+#### BIT Range Update Range Query
 
 ```c
 ll bit1[SZ], bit2[SZ];
@@ -533,7 +533,7 @@ void update(int idx, ll x){
 }
 ```
 
-### BIT 2D
+#### BIT 2D
 
 ```c
 int bit[SZ][SZ];
@@ -560,7 +560,7 @@ void rangeupdate(int x1, int y1, int x2, int y2, var k){
 }
 ```
 
-### BIT 2D Range Update Range Query
+#### BIT 2D Range Update Range Query
 
 ```c
 ll bit[4][SZ][SZ];
@@ -604,7 +604,7 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 }
 ```
 
-### Ordered Multiset with BIT
+#### Ordered Multiset with BIT
 
 ```c
 const int LOGN = 17;
@@ -676,6 +676,25 @@ void dijkstra(int ori){
 }
 ```
 
+# Spanning Tree
+
+```c
+vector<pii> g[SZ],h[SZ];
+	
+void prim(){
+	priority_queue< array<int,3> > pq;
+	for(auto p: g[1]) pq.push( {-p.se, p.fi, 1} );
+	bool vis[SZ]; mset(vis,0); vis[1] = 1;
+	while(!pq.empty()){
+		int v = pq.top()[1], u = pq.top()[2];
+		int d = -pq.top()[0]; pq.pop();
+		if(vis[v]) continue; else vis[v]=1;
+		h[v].pb({u,d}); h[u].pb({v,d});
+		for(auto& p: g[v]) pq.push({-p.se, p.fi, v});
+	}
+}
+```
+
 # Tree Linearization
 
 ```c
@@ -738,7 +757,7 @@ int lca(int i, int j){
 }
 ```
 
-Binary Lifting & Query on Tree
+#### Binary Lifting & Query on Tree
 
 ```c
 int n,m;
@@ -841,25 +860,6 @@ void kosaraju(){
 		if(vis[s.top()]) dfs2(s.top());
 		if(temp.size() > res.size()) res = temp; // maior scc
 		s.pop();
-	}
-}
-```
-
-# Spanning Tree
-
-```c
-vector<pii> g[SZ],h[SZ];
-	
-void prim(){
-	priority_queue< array<int,3> > pq;
-	for(auto p: g[1]) pq.push( {-p.se, p.fi, 1} );
-	bool vis[SZ]; mset(vis,0); vis[1] = 1;
-	while(!pq.empty()){
-		int v = pq.top()[1], u = pq.top()[2];
-		int d = -pq.top()[0]; pq.pop();
-		if(vis[v]) continue; else vis[v]=1;
-		h[v].pb({u,d}); h[u].pb({v,d});
-		for(auto& p: g[v]) pq.push({-p.se, p.fi, v});
 	}
 }
 ```
@@ -1026,7 +1026,9 @@ printf("LIS: ");
 for(auto i: res) printf("%d ", i); printf("\n");
 ```
 
-# Bitset
+# Gambiarra Data Set
+
+#### Bitset
 
 ```c
 int bs[1000000000/32];
@@ -1041,7 +1043,7 @@ void breset(int i){
 }
 ```
 
-# Inversed Vector
+#### Inversed Vector
 
 ```c
 struct ivi{ // inversed vector<int>
@@ -1056,7 +1058,7 @@ struct ivi{ // inversed vector<int>
 
 # Matematica
 
-MDC e MMC
+#### MDC e MMC
 
 ```c
 // __gcd(a,b);
@@ -1064,7 +1066,7 @@ int mdc(int a, int b) { return b == 0 ? a : mdc(b, a%b); }
 int mmc(int a, int b) { return a*b/mdc(a, b); }
 ```
 
-Euclides Extendido
+#### Euclides Extendido
 
 ```c
 int x,y,d;
@@ -1083,7 +1085,7 @@ void extEucl(int a, int b){
 }
 ```
 
-Crivo de Eratostenes
+#### Crivo de Eratostenes
 
 ```c
 const int N = 1e6;
@@ -1096,7 +1098,7 @@ void build(){
 }}}}
 ```
 
-Exponenciação Rápida
+#### Exponenciação Rápida
 
 ```c
 ll soma(ll a, ll b, ll c=mod){
@@ -1121,7 +1123,7 @@ ll fexp(ll a, ll b, ll c=mod){
 }
 ```
 
-Fatoração
+#### Fatoração
 
 ```c
 map<int,int> fatorar(int n){
@@ -1134,7 +1136,7 @@ map<int,int> fatorar(int n){
 }
 ```
 
-Totiente de Euler
+#### Totiente de Euler
 
 ```c
 var phi(var n){
@@ -1149,7 +1151,7 @@ var phi(var n){
 }
 ```
 
-Inverso Multiplicativo
+#### Inverso Multiplicativo
 
 ```c
 /// TIP /// inv(x) = x^(m-2) mod m ??? if m is prime and x<m
@@ -1160,7 +1162,7 @@ var inv(var x, var mod){
 }
 ```
 
-Matrizes
+#### Matrizes
 
 ```c
 //  x3 = ax2 + bx1 (Recorrencia)
@@ -1351,7 +1353,7 @@ Fórmulas para um triângulo com lados a,b,c
 . Raio Curcunscrito => R = (abc)/(4A)
 ```
 
-Biblioteca Completa
+#### Biblioteca Completa
 
 ```c
 const double EPS = 1e-9;
@@ -1506,7 +1508,7 @@ bool IsSimple(const vector<PT> &p) { //linhas nao se intersectam
 
 # Misc
 
-Bash Script
+#### Bash Script
 
 ```
 if [ -z $1 ]
@@ -1536,12 +1538,7 @@ else
 fi
 ```
 
-Compiladores Online
-
-> http://cpp.sh
-> https://www.tutorialspoint.com/compile_cpp11_online.php
-
-Visual Code Settings
+#### Visual Code Settings
 
 ```
 "editor.trimAutoWhitespace": false,
@@ -1552,7 +1549,7 @@ Visual Code Settings
 "extensions.ignoreRecommendations": true
 ```
 
-Prime Numbers
+#### Prime Numbers
 
 ```
 1061108099	1061108627	1061109073	1061109607
@@ -1567,7 +1564,7 @@ Prime Numbers
 32416187953	32416188589	32416189231	32416189859
 ```
 
-Template
+#### Template
 
 ```c
 //#include <bits/stdc++.h>/*
