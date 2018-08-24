@@ -118,6 +118,19 @@ void mos(){
 }
 ```
 
+# Ordered Set
+
+```c
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+#define ordered_set tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update>
+
+// find_by_order(k) = pointer to kth element
+// order_of_key(x) = how many elements less than x
+```
+
 # Segment Tree
 
 ```c
@@ -469,46 +482,6 @@ struct Treap {
 	}
 	int size() const { return root ? root->size : 0; }
 };
-```
-
-# Ordered Set
-
-```c
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
-
-#define ordered_set tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update>
-
-// find_by_order(k) = pointer to kth element
-// order_of_key(x) = how many elements less than x
-```
-
-Multiset
-
-```c
-#define var pair<int,int>
-#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
-
-int id = 0; map<int,vi> ids;
-void insere(ordered_set &s, int x){
-	s.insert({x,++id}); ids[x].pb(id);
-}
-void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
-	s.erase({x,ids[x].back()}); ids[x].pop_back();
-}
-int kth(ordered_set &s, int x){
-	return s.find_by_order(x)->fi;
-}
-int smallerCount(ordered_set &s, int x){
-	return s.order_of_key({x,0});
-}
-int count(ordered_set &s, int x){
-	return smallerCount(s,x+1)-smallerCount(s,x);
-}
-ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
-	return s.find({x,ids[x].back()});
-}
 ```
 
 # BIT Variations
@@ -1027,6 +1000,33 @@ for(auto i: res) printf("%d ", i); printf("\n");
 ```
 
 # Gambiarra Data Set
+
+#### Ordered Multiset
+
+```c
+#define var pair<int,int>
+#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
+
+int id = 0; map<int,vi> ids;
+void insere(ordered_set &s, int x){
+	s.insert({x,++id}); ids[x].pb(id);
+}
+void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
+	s.erase({x,ids[x].back()}); ids[x].pop_back();
+}
+int kth(ordered_set &s, int x){
+	return s.find_by_order(x)->fi;
+}
+int smallerCount(ordered_set &s, int x){
+	return s.order_of_key({x,0});
+}
+int count(ordered_set &s, int x){
+	return smallerCount(s,x+1)-smallerCount(s,x);
+}
+ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
+	return s.find({x,ids[x].back()});
+}
+```
 
 #### Bitset
 
