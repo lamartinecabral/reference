@@ -1,14 +1,10 @@
 # Busca Binaria
 
 ```c
-bool f(ll x){
-	return x>=42;
-}
-
 ll bin(ll L, ll R){
 	while(L<=R){
 		ll m = (L+R)/2;
-		f(m) ? R = m-1 : L = m+1;
+		test(m) ? R = m-1 : L = m+1;
 	}
 	return L; // primeiro true
 	return R; // ultimo false
@@ -1627,6 +1623,7 @@ const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 1e5+20;
 
 int main(){
+	
 	return 0;
 }
 ```
