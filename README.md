@@ -339,19 +339,19 @@ int main(){
 	while(1){
 		int x; char op; cin>>op;
 		switch(op){
-			case 'i': //inserir
+			case 'i': //insert
 				cin>>x; ms.insert(x); upd(x,1);
 				break;
-			case 'e': //apagar
+			case 'e': //erase
 				cin>>x; ms.erase(ms.find(x)); upd(x,-1);
 				break;
-			case 'm': //quantos menores
-				cin>>x; cout<<qry(x-1)<<endl;
+			case 'l': //quantos less than or equal
+				cin>>x; cout<<qry(x)<<endl;
 				break;
-			case 'k': //qual k-esimo
+			case 'k': //qual kth
 				cin>>x; cout<<prefix(x)<<endl;
 				break;
-			case 'p': //imprime conjunto
+			case 'p': //print conjunto
 				for(auto a: ms) cout<<a<<' '; cout<<endl;
 				for(int i=1; i<=ms.size(); i++) cout<<prefix(i)<<' '; cout<<endl;
 				break;
