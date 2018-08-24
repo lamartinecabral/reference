@@ -1190,74 +1190,66 @@ vi powerx(vi &a, int b){
 }
 ```
 
-# Miller-Rabin's Prime Check & Pollard's Rho Algorithm
+# Miller-Rabin's Prime Check & Pollard Rho's Algorithm
 
-O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o menor fator primo P com complexidade O(sqrt(P)). Para isso, é necessario que o numero seja composto. Para verificar isso, é usado o teste de Miller-Rabin que responde se o numero é primo com grande propabilidade de acerto.
+O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o menor fator primo P com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
 ll llrand(){
 	ll tmp = rand(); return (tmp << 31) | rand();
 }
 
-ll soma(ll a, ll b, ll c){
-	return (a + b) % c;
+ll modSum(ll a, ll b, ll c){
+	return a+b >= c ? (a+b)%c : a+b;
 }
 
-ll mult(ll a, ll b, ll c){
+ll modMul(ll a, ll b, ll c){
 	ll res = 0;
 	while(b){
-		if(b & 1) res = soma(res, a, c);
-		a = soma(a, a, c);
+		if(b & 1) res = modSum(res, a, c);
+		a = modSum(a, a, c);
 		b /= 2;}
 	return res;
 }
 
-ll fexp(ll a, ll b, ll c){
+ll modExp(ll a, ll b, ll c){
 	ll res = 1;
 	while(b){
-		if(b & 1) res = mult(res, a, c);
-		a = mult(a, a, c);
+		if(b & 1) res = modMul(res, a, c);
+		a = modMul(a, a, c);
 		b /= 2;}
 	return res;
+}
+
+bool rabin(long long n) {
+	vector<int> p = {2, 3, 5, 7, 11, 13, 17, 19, 23};
+	for(auto x: p) if(n%x==0) return n==x;
+	if(n < p.back()) return false;
+	long long s = 0, t = n - 1;
+	while (~t & 1) t >>= 1, ++s;
+	for(auto x: p){
+		ll pt = modExp((ll)x, t, n);
+		if (pt == 1) continue;
+		bool ok = false;
+		for (int j = 0; j < s && !ok; j++) {
+			if (pt == n - 1) ok = true;
+			pt = modMul(pt, pt, n);
+		}
+		if (!ok) return false;
+	}
+	return true;
 }
 
 ll rho(ll n){
 	if(n % 2 == 0) return 2;
 	ll d, c = llrand() % n, x = llrand() % n, y = x;
 	do{
-		x = soma(mult(x, x, n), c, n);
-		y = soma(mult(y, y, n), c, n);
-		y = soma(mult(y, y, n), c, n);
+		x = modSum(modMul(x, x, n), c, n);
+		y = modSum(modMul(y, y, n), c, n);
+		y = modSum(modMul(y, y, n), c, n);
 		d = __gcd(abs(x - y), n);
 	}while(d == 1);
 	return d;
-}
-
-bool rabin(ll n){
-	if(n <= 1) return 1;
-	if(n <= 3) return 1;
-	ll s = 0, d = n - 1;
-	while(d % 2 == 0) d /= 2, s++;
-	for(int k = 0; k < 64*4; k++){
-		ll a = (llrand() % (n - 3)) + 2;
-		ll x = fexp(a, d, n);
-		if(x != 1 && x != n-1){
-			for(int r = 1; r < s; r++){
-				x = mult(x, x, n);
-				if(x == 1) return 0;
-				if(x == n-1) break;}
-			if(x != n-1) return 0;
-	}} return 1;
-}
-
-int main(){
-	srand(time(0));
-	ll n; scanf("%lld", &n);
-
-	if(rabin(n)) return printf("o numero eh primo\n"), 0;
-	printf("nao eh primo\n");
-	ll d = rho(n); if(d * (n/d) != n) printf("fail\n");
-	printf("%lld = %lld * %lld\n", n, d, n/d);
 }
 ```
 
