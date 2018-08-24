@@ -308,9 +308,7 @@ int matching(int A, int B){
 # Fenwick Tree / Binary Indexed Tree
 
 ```c
-const int N = 1e5+10;
-const int LOGN = 17;
-ll bit[N];
+ll bit[SZ];
 
 ll qry(int idx) {
 	ll sum = 0;
@@ -318,23 +316,56 @@ ll qry(int idx) {
 	return sum;
 }
 void upd(int idx, ll k){
-	for(int i=idx; i<N; i += i&-i) bit[i] += k;
+	for(int i=idx; i<SZ; i += i&-i) bit[i] += k;
 }
-int prefix(ll v){ // lower bound search
+```
+
+Ordered Multiset com Fenwick Tree
+
+```c
+const int LOGN = 17;
+int prefix(ll x){ // lower bound prefix search
 	ll sum = 0; int pos = 0;
 	for(int i=LOGN; i>=0; i--)
-		if(pos + (1 << i) < N && sum + bit[pos + (1 << i)] < v){
+		if(pos + (1 << i) < SZ && sum + bit[pos + (1 << i)] < x){
 			sum += bit[pos + (1 << i)];
 			pos += (1 << i); }
 	return pos + 1;
+}
+
+int main(){
+	
+	multiset<int> ms;
+	while(1){
+		int x; char op; cin>>op;
+		switch(op){
+			case 'i': //inserir
+				cin>>x; ms.insert(x); upd(x,1);
+				break;
+			case 'e': //apagar
+				cin>>x; ms.erase(ms.find(x)); upd(x,-1);
+				break;
+			case 'm': //quantos menores
+				cin>>x; cout<<qry(x-1)<<endl;
+				break;
+			case 'k': //qual k-esimo
+				cin>>x; cout<<prefix(x)<<endl;
+				break;
+			case 'p': //imprime conjunto
+				for(auto a: ms) cout<<a<<' '; cout<<endl;
+				for(int i=1; i<=ms.size(); i++) cout<<prefix(i)<<' '; cout<<endl;
+				break;
+		}
+	}
+	
+	return 0;
 }
 ```
 
 Range Update Range Query
 
 ```c
-const int N = 1e5+10;
-ll bit1[N], bit2[N];
+ll bit1[SZ], bit2[SZ];
 
 // retorna o somatorio a[1]+a[2]+...+a[i]
 ll query(int idx){
@@ -346,16 +377,15 @@ ll query(int idx){
 
 // incrementa x em todos a[i],a[i+1],...,a[N]
 void update(int idx, ll x){
-	for(int i = idx; i<N; i += i&-i) bit1[i] += x;
-	for(int i = idx; i<N; i += i&-i) bit2[i] += x*(idx-1);
+	for(int i = idx; i<SZ; i += i&-i) bit1[i] += x;
+	for(int i = idx; i<SZ; i += i&-i) bit2[i] += x*(idx-1);
 }
 ```
 
 # BIT 2D
 
 ```c
-const int N = 1e5+10;
-int bit[N][N];
+int bit[SZ][SZ];
 
 int query(int idx, int jdx){
 	int sum = 0;
@@ -365,8 +395,8 @@ int query(int idx, int jdx){
 	return sum;
 }
 void update(int idx, int jdx, ll k){
-	for(int i=idx; i<N; i += i&-i)
-		for(int j=jdx; j<N; j += j&-j)
+	for(int i=idx; i<SZ; i += i&-i)
+		for(int j=jdx; j<SZ; j += j&-j)
 			bit[i][j] += k;
 }
 // para point update range query
@@ -382,12 +412,11 @@ void rangeupdate(int x1, int y1, int x2, int y2, var k){
 Range Update and Query
 
 ```c
-const int N = 1e5+10;
-ll bit[4][N][N];
+ll bit[4][SZ][SZ];
 
 void upd(int id, int x, int y, ll k){
-	for(int i = x; i<N; i += i&-i)
-		for(int j = y; j<N; j += j&-j)
+	for(int i = x; i<SZ; i += i&-i)
+		for(int j = y; j<SZ; j += j&-j)
 			bit[id][i][j] += k;
 }
 
