@@ -1621,12 +1621,9 @@ template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
 
-const double EPS = 1e-9;
-const double PI = acos(-1);
-const int INF = 0x3f3f3f3f;
-const ll LINF = 0x3f3f3f3f3f3f3f3f;
-const ll mod = 1e9+7;
-const int SZ = 1e5+20;
+const double EPS = 1e-9, PI = acos(-1);
+const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
+const int INF = 0x3f3f3f3f, SZ = 1e5+20;
 
 int main(){
 	return 0;
