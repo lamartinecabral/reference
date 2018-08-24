@@ -1195,37 +1195,27 @@ vi powerx(vi &a, int b){
 O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o menor fator primo P com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
-ll llrand(){
-	ll tmp = rand(); return (tmp << 31) | rand();
-}
-
 ll modSum(ll a, ll b, ll c){
 	return a+b >= c ? (a+b)%c : a+b;
 }
-
 ll modMul(ll a, ll b, ll c){
-	ll res = 0;
-	while(b){
+	ll res = 0; while(b){
 		if(b & 1) res = modSum(res, a, c);
-		a = modSum(a, a, c);
-		b /= 2;}
-	return res;
+		a = modSum(a, a, c); b /= 2;
+	} return res;
 }
-
 ll modExp(ll a, ll b, ll c){
-	ll res = 1;
-	while(b){
+	ll res = 1; while(b){
 		if(b & 1) res = modMul(res, a, c);
-		a = modMul(a, a, c);
-		b /= 2;}
-	return res;
+		a = modMul(a, a, c); b /= 2;
+	} return res;
 }
 
-bool rabin(long long n) {
+bool rabin(ll n) {
 	vector<int> p = {2, 3, 5, 7, 11, 13, 17, 19, 23};
 	for(auto x: p) if(n%x==0) return n==x;
 	if(n < p.back()) return false;
-	long long s = 0, t = n - 1;
+	ll s = 0, t = n - 1;
 	while (~t & 1) t >>= 1, ++s;
 	for(auto x: p){
 		ll pt = modExp((ll)x, t, n);
@@ -1240,15 +1230,16 @@ bool rabin(long long n) {
 	return true;
 }
 
+ll Lrand(){ ll tmp=rand(); return (tmp<<31)|rand(); }
 ll rho(ll n){
+	if(rabin(n)) return n;
 	if(n % 2 == 0) return 2;
-	ll d, c = llrand() % n, x = llrand() % n, y = x;
-	do{
-		x = modSum(modMul(x, x, n), c, n);
+	ll d, c = Lrand() % n, x = Lrand() % n, y = x;
+	do{ x = modSum(modMul(x, x, n), c, n);
 		y = modSum(modMul(y, y, n), c, n);
 		y = modSum(modMul(y, y, n), c, n);
 		d = __gcd(abs(x - y), n);
-	}while(d == 1);
+	} while(d == 1);
 	return d;
 }
 ```
