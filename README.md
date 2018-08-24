@@ -1165,9 +1165,9 @@ var inv(var x, var mod){
 #### Matrizes
 
 ```c
-//  x3 = ax2 + bx1 (Recorrencia)
-// |x2 x1||a 1| = |x3 x2|
-// |x1 x0||b 0|   |x2 x1|
+//  F3 = aF2 + bF1 (Recorrencia)
+// |a b||F2| = |F3|
+// |1 0||F1|   |F2|
 
 vi multx(vi &a, vi &b){
 	int n = sqrt(a.size());
@@ -1192,7 +1192,7 @@ vi powerx(vi &a, int b){
 
 # Miller-Rabin's Prime Check & Pollard Rho's Algorithm
 
-O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o menor fator primo P com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
+O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
 ll modSum(ll a, ll b, ll c){
@@ -1216,18 +1216,16 @@ bool rabin(ll n) {
 	for(auto x: p) if(n%x==0) return n==x;
 	if(n < p.back()) return false;
 	ll s = 0, t = n - 1;
-	while (~t & 1) t >>= 1, ++s;
+	while(~t & 1) t >>= 1, ++s;
 	for(auto x: p){
 		ll pt = modExp((ll)x, t, n);
-		if (pt == 1) continue;
+		if(pt == 1) continue;
 		bool ok = false;
-		for (int j = 0; j < s && !ok; j++) {
-			if (pt == n - 1) ok = true;
+		for(int j = 0; j < s && !ok; j++) {
+			if(pt == n - 1) ok = true;
 			pt = modMul(pt, pt, n);
-		}
-		if (!ok) return false;
-	}
-	return true;
+		} if(!ok) return false;
+	} return true;
 }
 
 ll Lrand(){ ll tmp=rand(); return (tmp<<31)|rand(); }
