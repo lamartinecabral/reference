@@ -909,7 +909,7 @@ int matching(int A, int B){
 }
 ```
 
-# Knapsack
+# Knapsack / Mochila 0-1
 
 ```c
 int n,c;
