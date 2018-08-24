@@ -1590,6 +1590,7 @@ Template
 #include <stack>
 #include <array>
 #include <cmath> //sqrt, sin
+#include <time>
 #include <map>
 #include <set>
 //*/
