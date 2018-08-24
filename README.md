@@ -11,294 +11,13 @@ ll bin(ll L, ll R){
 }
 ```
 
-# Dijkstra
+# Disjoint Set Union / Union Find
 
 ```c
-vector<pii> g[SZ];
-int d[SZ];
+int pai[SZ]; // inicializar com pai[i] = i;
 
-void dijkstra(int ori){
-	memset(d,63,sizeof d);
-	d[ori] = 0;
-
-	typedef array<int,2> vet;
-	priority_queue< vet, vector<vet>, greater<vet> > pq;
-	pq.push( {0,ori} );
-	while(!pq.empty()){
-		int dv = pq.top()[0];
-		int v = pq.top()[1];
-		pq.pop();
-		if(dv > d[v]) continue;
-		for(auto x: g[v]){
-			int u = x.fi;
-			int p = x.se;
-			if(dv + p < d[u]){
-				d[u] = dv + p;
-				pq.push( {d[u], u} );
-			}
-		}
-	}
-}
-```
-
-# Tree Linearization
-
-```c
-vector<int> g[SZ]; // lista de filhos do vertice i
-int peso[SZ]; // peso associado ao vertice i, ou aresta de i para o pai
-int ini[SZ], fim[SZ]; // tempo de inicio e fim do vertice i
-int tempo; // contador do tempo
-int lin[SZ]; // arvore linearizada
-int id[SZ]; // id do vertice correspondente ao tempo i
-
-void linearizar(int v){
-	ini[v] = ++tempo;
-	lin[tempo] = peso[v];
-	id[tempo] = v;
-	for(int i=0; i<g[v].size(); i++){
-		linearizar(g[v][i]);
-	}
-	fim[v] = tempo;
-}
-```
-
-# Lowest Common Ancestor
-
-```c
-vi g[SZ];
-int cont;
-int id[SZ]; // ultimo contador do vertice
-vector<pii> arr; // array pro lca
-
-void linear(int v, int ant, int altura){
-	id[v] = cont++;
-	arr.pb({altura,v});
-	for(auto u: g[v]) if(u!=ant){
-		linear(u, v, altura+1);
-		id[v] = cont++;
-		arr.pb({altura,v});
-	}
-}
-
-pii st[SZ*2][21]; // must be [n][logn+1]
-void buildtable(){
-	int n = arr.size(); int m = log2(n-1)+1;
-	FOR(i,0,n) st[i][0] = arr[i];	
-	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
-		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
-}
-
-void build(int raiz){
-	cont = 0; arr.clear();
-	linear(raiz,raiz,-1);
-	buildtable();
-}
-
-int lca(int i, int j){
-	i = id[i]; j = id[j];
-	if(i==j) return st[i][0].se;
-	if(i>j) swap(i,j);
-	int k = log2(j-i);
-	return min(st[i][k], st[j+1-(1<<k)][k]).se;
-}
-```
-
-Binary Lifting & Query on Tree
-
-```c
-int n,m;
-vector<pii> g[SZ];
-#define LOGN 20
-int parent[SZ][LOGN];
-int height[SZ];
-int query[SZ][LOGN]; //q[i][j] = maior aresta no caminho entre o vertice i e o ancestor 2^j
-
-void init(int v, int p, int h, int q){
-	parent[v][0] = p; height[v] = h; query[v][0] = q;
-	for(auto &u: g[v]) if(u.fi!=p) init(u.fi,v,h+1,u.se);
-}
-void build(){ // é importante que os vertices sejam 1-based e o pai da raiz seja 0
-	init(1,0,0,-INF); // raiz,pai,altura,weight(v->p)
-	FOR(k,1,LOGN) FOR(v,1,n+1){
-		int p = parent[v][k-1];
-		parent[v][k] = parent[p][k-1];
-		query[v][k] = max(query[v][k-1],query[p][k-1]); // edit here
-}}
-int lca(int v, int u){
-	if(height[v] < height[u]) swap(v,u);
-	int x = height[v]-height[u];
-	FOR(k,0,LOGN) if(x&(1<<k)) v = parent[v][k]; // walk x
-	if(v==u) return v;
-	for(int k=LOGN-1; k>=0; k--) if(parent[v][k]!=parent[u][k]){
-		v = parent[v][k]; u = parent[u][k];
-	} return parent[v][0];
-}
-int qry(int v, int u){
-	vi vertices = {v,u}; int ans = -INF; // edit here
-	for(auto t: vertices){
-		int x = height[t]-height[lca(v,u)];
-		FOR(k,0,LOGN) if(x&(1<<k)){
-			ans = max(ans,query[t][k]); // edit here
-			t = parent[t][k];
-	}} return ans;
-}
-```
-
-# Topological Sort
-
-```c
-int grau[SZ]; int n;
-vi g[SZ]; vi res;
-
-bool ord_top(){ // kahn's algorithm
-	priority_queue<int> pq; res.clear();
-	bool vis[SZ]; memset(vis,1,sizeof vis);
-	for(int i=0; i<n; i++) if(grau[i]==0){
-		vis[i] = 0;
-		pq.push(-i);
-	}
-	while(!pq.empty()){
-		int v = -pq.top(); pq.pop();
-		res.pb(v);
-		for(int i=0; i<g[v].size(); i++){
-			int u = g[v][i];
-			if(vis[u]){
-				grau[u]--;
-				if(grau[u] == 0){
-					vis[u] = 0;
-					pq.push(-u);
-	}}}}
-	return res.size() == n;
-}
-```
-
-# SCC Kosaraju
-
-```c
-// http://www.geeksforgeeks.org/strongly-connected-components/
-vi g[SZ], h[SZ]; // grafos indo e voltando
-bool vis[SZ];
-vi res,temp;
-stack<int> s;
-
-void dfs(int v){
-	vis[v] = 0;
-	for(int i=0; i<g[v].size(); i++){
-		if(vis[g[v][i]]) dfs(g[v][i]);
-	} s.push(v);
-}
-
-void dfs2(int v){
-	vis[v] = 0;
-	for(int i=0; i<h[v].size(); i++){
-		if(vis[h[v][i]]) dfs2(h[v][i]);
-	} temp.pb(v);
-}
-
-void kosaraju(){
-	memset(vis,1,sizeof vis);
-	for(int i=1; i<=n; i++){
-		if(vis[i]) dfs(i);
-	}
-	memset(vis,1,sizeof vis); res.clear();
-	while(!s.empty()){
-		temp.clear();
-		if(vis[s.top()]) dfs2(s.top());
-		if(temp.size() > res.size()) res = temp; // maior scc
-		s.pop();
-	}
-}
-```
-
-# Spanning Tree
-
-```c
-vector<pii> g[SZ],h[SZ];
-	
-void prim(){
-	priority_queue< array<int,3> > pq;
-	for(auto p: g[1]) pq.push( {-p.se, p.fi, 1} );
-	bool vis[SZ]; mset(vis,0); vis[1] = 1;
-	while(!pq.empty()){
-		int v = pq.top()[1], u = pq.top()[2];
-		int d = -pq.top()[0]; pq.pop();
-		if(vis[v]) continue; else vis[v]=1;
-		h[v].pb({u,d}); h[u].pb({v,d});
-		for(auto& p: g[v]) pq.push({-p.se, p.fi, v});
-	}
-}
-```
-
-# Travelling Salesman Problem (TSP)
-
-TSP reduzido pra calcular o custo da melhor permutação
-Iterativo:
-
-```c
-int N;
-double h[MAXN][MAXN];
-double tsp[1<<MAXN][MAXN];
-// tsp[S][i] = o custo de visitar todos os
-// nós de S onde i foi o ultimo nó visitado
-
-void build(int ori){
-	memset(tsp,INF,sizeof tsp);
-	for(int i=0; i<N; i++) if(i!=ori) tsp[1<<i][i] = h[ori][i];
-	
-	for(int bit=0; bit<(1<<N); bit++)
-	for(int i=0; i<N; i++) if( bit&(1<<i) )
-	for(int j=0; j<N; j++) if( bit&(1<<j) )
-	if( i!=j )
-	tsp[bit][i] = min( tsp[bit][i], tsp[bit^(1<<i)][j] + h[j][i] );
-}
-```
-
-Recursivo:
-
-```c
-int N, ori, h[MAXN][MAXN], pd[1<<MAXN][MAXN];
-// pd[S][i] = o custo de visitar todos os
-// nós de S onde i foi o ultimo nó visitado
-
-int tsp(int bit, int i){
-	if(pd[bit][i]!=-1) return pd[bit][i];
-	if(bit == (1<<i)){
-		pd[bit][i] = h[ori][i];
-		return pd[bit][i]; }
-	
-	pd[bit][i] = INF;
-	for(int j=0; j<N; j++) if(bit&(1<<j) && i!=j)
-		pd[bit][i] = min(pd[bit][i], tsp(bit^(1<<i),j)+h[j][i] );
-	return pd[bit][i];
-}
-```
-
-# Bipartite Matching (Kuhn's)
-
-```c
-int vis[SZ], b[SZ], tempo;
-vi g[SZ]; //1-based
-
-bool kuhn(int u){
-	if(vis[u]==tempo) return false;
-	vis[u] = tempo;
-	for(int v: g[u]){
-		if( !b[v] || kuhn(b[v]) ){
-			b[v] = u;
-			return true;
-		}
-	}
-	return false;
-}
-
-int matching(int A, int B){
-	for(int i=1; i<=A; i++){
-		tempo++; kuhn(i);
-	}
-	int cont = 0;
-	for(int i=1; i<=B; i++) if(b[i]) cont++;
-	return cont;
-}
+int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
+void uni(int i, int j){ pai[find(i)] = find(j); }
 ```
 
 # Fenwick Tree / Binary Indexed Tree
@@ -316,136 +35,24 @@ void upd(int idx, ll k){
 }
 ```
 
-Ordered Multiset com Fenwick Tree
+# Sparse Table
 
 ```c
-const int LOGN = 17;
-int prefix(ll x){ // lower bound prefix search
-	ll sum = 0; int pos = 0;
-	for(int i=LOGN; i>=0; i--)
-		if(pos + (1 << i) < SZ && sum + bit[pos + (1 << i)] < x){
-			sum += bit[pos + (1 << i)];
-			pos += (1 << i); }
-	return pos + 1;
+vector<int> arr;
+int st[SZ][20];
+
+void build(){
+	int n = arr.size(); int m = log2(n-1)+1;
+	FOR(i,0,n) st[i][0] = arr[i];   
+	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
+		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
 }
 
-int main(){
-	
-	multiset<int> ms;
-	while(1){
-		int x; char op; cin>>op;
-		switch(op){
-			case 'i': //insert
-				cin>>x; ms.insert(x); upd(x,1);
-				break;
-			case 'e': //erase
-				cin>>x; ms.erase(ms.find(x)); upd(x,-1);
-				break;
-			case 'l': //quantos less than or equal
-				cin>>x; cout<<qry(x)<<endl;
-				break;
-			case 'k': //qual kth
-				cin>>x; cout<<prefix(x)<<endl;
-				break;
-			case 'p': //print conjunto
-				for(auto a: ms) cout<<a<<' '; cout<<endl;
-				for(int i=1; i<=ms.size(); i++) cout<<prefix(i)<<' '; cout<<endl;
-				break;
-		}
-	}
-	
-	return 0;
-}
-```
-
-Range Update Range Query
-
-```c
-ll bit1[SZ], bit2[SZ];
-
-// retorna o somatorio a[1]+a[2]+...+a[i]
-ll query(int idx){
-	ll sum1=0, sum2=0;
-	for(int i = idx; i; i -= i&-i) sum1 += bit1[i];
-	for(int i = idx; i; i -= i&-i) sum2 += bit2[i];
-	return sum1*idx - sum2;
-}
-
-// incrementa x em todos a[i],a[i+1],...,a[N]
-void update(int idx, ll x){
-	for(int i = idx; i<SZ; i += i&-i) bit1[i] += x;
-	for(int i = idx; i<SZ; i += i&-i) bit2[i] += x*(idx-1);
-}
-```
-
-# BIT 2D
-
-```c
-int bit[SZ][SZ];
-
-int query(int idx, int jdx){
-	int sum = 0;
-	for(int i=idx; i; i -= i&-i)
-		for(int j=jdx; j; j -= j&-j)
-			sum += bit[i][j];
-	return sum;
-}
-void update(int idx, int jdx, ll k){
-	for(int i=idx; i<SZ; i += i&-i)
-		for(int j=jdx; j<SZ; j += j&-j)
-			bit[i][j] += k;
-}
-// para point update range query
-var rangequery(int x1, int y1, int x2, int y2){
-	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
-}
-// para range update point query
-void rangeupdate(int x1, int y1, int x2, int y2, var k){
-	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
-}
-```
-
-Range Update and Query
-
-```c
-ll bit[4][SZ][SZ];
-
-void upd(int id, int x, int y, ll k){
-	for(int i = x; i<SZ; i += i&-i)
-		for(int j = y; j<SZ; j += j&-j)
-			bit[id][i][j] += k;
-}
-
-ll qry(int id, int x, int y){
-	ll sum = 0;
-	for(int i = x; i>0; i -= i&-i)
-		for(int j = y; j>0; j -= j&-j)
-			sum += bit[id][i][j];
-	return sum;
-}
-
-void update(int x, int y, ll k){
-	upd(0, x, y, k);
-	upd(1, x, y, k*(x-1) );
-	upd(2, x, y, k*(y-1) );
-	upd(3, x, y, k*(x-1)*(y-1) );
-}
-
-ll query(int x, int y){
-	ll sum = 0;
-	sum += qry(0,x,y)*x*y;
-	sum -= qry(1,x,y)*y;
-	sum -= qry(2,x,y)*x;
-	sum += qry(3,x,y);
-	return sum;
-}
-
-ll rangequery(int x1, int y1, int x2, int y2){
-	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
-}
-
-void rangeupdate(int x1, int y1, int x2, int y2, ll k){
-	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
+int query(int i, int j){
+	if(i==j) return st[i][0];
+	if(i>j) swap(i,j);
+	int k = log2(j-i);
+	return min(st[i][k], st[j+1-(1<<k)][k]);
 }
 ```
 
@@ -478,81 +85,37 @@ void pointupdate(int i, ll k){
 }
 ```
 
-# Ordered Set
+# Mo's Algorithm
 
 ```c
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
+int block;
+vector<int> v;
+vector<array<int,3> > query; // {L,R,index}
+int answer[SZ];
 
-#define ordered_set tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update>
+void insere(int i){ }
+void apaga(int i){ }
+int solve(){ }
 
-// find_by_order(k) = pointer to kth element
-// order_of_key(x) = how many elements less than x
-```
-
-Multiset
-
-```c
-#define var pair<int,int>
-#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
-
-int id = 0; map<int,vi> ids;
-void insere(ordered_set &s, int x){
-	s.insert({x,++id}); ids[x].pb(id);
+bool comp(array<int,3> &x, array<int,3> &y){
+	if(x[0]/block != y[0]/block)
+		return x[0] < y[0];
+	return (x[0]/block)&1 ? x[1] > y[1] : x[1] < y[1];
 }
-void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
-	s.erase({x,ids[x].back()}); ids[x].pop_back();
-}
-int kth(ordered_set &s, int x){
-	return s.find_by_order(x)->fi;
-}
-int smallerCount(ordered_set &s, int x){
-	return s.order_of_key({x,0});
-}
-int count(ordered_set &s, int x){
-	return smallerCount(s,x+1)-smallerCount(s,x);
-}
-ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
-	return s.find({x,ids[x].back()});
-}
-```
 
-# Bitset
-
-```c
-int bs[1000000000/32];
-bool bget(int i){
-	return bs[i>>5]&(1<<(i&31));
+void mos(){
+	block = sqrt(v.size());
+	sort(all(query), comp);
+	
+	int cl = 0, cr = 0; insere(0);
+	for(auto &q: query){
+		while(q[1] > cr) insere(++cr);
+		while(q[1] < cr) apaga(cr--);
+		while(q[0] < cl) insere(--cl);
+		while(q[0] > cl) apaga(cl++);
+		answer[q[2]] = solve();
+	}
 }
-void bset(int i){
-	bs[i>>5] |= (1<<(i&31));
-}
-void breset(int i){
-	bs[i>>5] &= ~(1<<(i&31));
-}
-```
-
-# Inversed Vector
-
-```c
-struct ivi{ // inversed vector<int>
-	vi a;
-	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
-	int& operator[](int i){ return a[a.size()-1-i]; }
-	void push_front(int x){ a.push_back(x); }
-	int size(){ return (int)a.size(); }
-	void swap(ivi& b){ a.swap(b.a); }
-};
-```
-
-# Union Find
-
-```c
-int pai[SZ]; // inicializar com pai[i] = i;
-
-int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
-void uni(int i, int j){ pai[find(i)] = find(j); }
 ```
 
 # Segment Tree
@@ -601,27 +164,6 @@ void pointupdate(int index, var x){
 	}
 	arr[index] = x; seg[i] = x; i/=2;
 	while(i) seg[i] = mix(seg[i*2], seg[i*2+1]), i/=2;
-}
-```
-
-# Sparse Table
-
-```c
-vector<int> arr;
-int st[SZ][20];
-
-void build(){
-	int n = arr.size(); int m = log2(n-1)+1;
-	FOR(i,0,n) st[i][0] = arr[i];   
-	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
-		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
-}
-
-int query(int i, int j){
-	if(i==j) return st[i][0];
-	if(i>j) swap(i,j);
-	int k = log2(j-i);
-	return min(st[i][k], st[j+1-(1<<k)][k]);
 }
 ```
 
@@ -929,36 +471,468 @@ struct Treap {
 };
 ```
 
-# Mo's Algorithm
+# Ordered Set
 
 ```c
-int block;
-vector<int> v;
-vector<array<int,3> > query; // {L,R,index}
-int answer[SZ];
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 
-void insere(int i){ }
-void apaga(int i){ }
-int solve(){ }
+#define ordered_set tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update>
 
-bool comp(array<int,3> &x, array<int,3> &y){
-	if(x[0]/block != y[0]/block)
-		return x[0] < y[0];
-	return (x[0]/block)&1 ? x[1] > y[1] : x[1] < y[1];
+// find_by_order(k) = pointer to kth element
+// order_of_key(x) = how many elements less than x
+```
+
+Multiset
+
+```c
+#define var pair<int,int>
+#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
+
+int id = 0; map<int,vi> ids;
+void insere(ordered_set &s, int x){
+	s.insert({x,++id}); ids[x].pb(id);
+}
+void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
+	s.erase({x,ids[x].back()}); ids[x].pop_back();
+}
+int kth(ordered_set &s, int x){
+	return s.find_by_order(x)->fi;
+}
+int smallerCount(ordered_set &s, int x){
+	return s.order_of_key({x,0});
+}
+int count(ordered_set &s, int x){
+	return smallerCount(s,x+1)-smallerCount(s,x);
+}
+ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
+	return s.find({x,ids[x].back()});
+}
+```
+
+# BIT Variations
+
+### BIT Range Update Range Query
+
+```c
+ll bit1[SZ], bit2[SZ];
+
+// retorna o somatorio a[1]+a[2]+...+a[i]
+ll query(int idx){
+	ll sum1=0, sum2=0;
+	for(int i = idx; i; i -= i&-i) sum1 += bit1[i];
+	for(int i = idx; i; i -= i&-i) sum2 += bit2[i];
+	return sum1*idx - sum2;
 }
 
-void mos(){
-	block = sqrt(v.size());
-	sort(all(query), comp);
+// incrementa x em todos a[i],a[i+1],...,a[N]
+void update(int idx, ll x){
+	for(int i = idx; i<SZ; i += i&-i) bit1[i] += x;
+	for(int i = idx; i<SZ; i += i&-i) bit2[i] += x*(idx-1);
+}
+```
+
+### BIT 2D
+
+```c
+int bit[SZ][SZ];
+
+int query(int idx, int jdx){
+	int sum = 0;
+	for(int i=idx; i; i -= i&-i)
+		for(int j=jdx; j; j -= j&-j)
+			sum += bit[i][j];
+	return sum;
+}
+void update(int idx, int jdx, ll k){
+	for(int i=idx; i<SZ; i += i&-i)
+		for(int j=jdx; j<SZ; j += j&-j)
+			bit[i][j] += k;
+}
+// para point update range query
+var rangequery(int x1, int y1, int x2, int y2){
+	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
+}
+// para range update point query
+void rangeupdate(int x1, int y1, int x2, int y2, var k){
+	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
+}
+```
+
+### BIT 2D Range Update Range Query
+
+```c
+ll bit[4][SZ][SZ];
+
+void upd(int id, int x, int y, ll k){
+	for(int i = x; i<SZ; i += i&-i)
+		for(int j = y; j<SZ; j += j&-j)
+			bit[id][i][j] += k;
+}
+
+ll qry(int id, int x, int y){
+	ll sum = 0;
+	for(int i = x; i>0; i -= i&-i)
+		for(int j = y; j>0; j -= j&-j)
+			sum += bit[id][i][j];
+	return sum;
+}
+
+void update(int x, int y, ll k){
+	upd(0, x, y, k);
+	upd(1, x, y, k*(x-1) );
+	upd(2, x, y, k*(y-1) );
+	upd(3, x, y, k*(x-1)*(y-1) );
+}
+
+ll query(int x, int y){
+	ll sum = 0;
+	sum += qry(0,x,y)*x*y;
+	sum -= qry(1,x,y)*y;
+	sum -= qry(2,x,y)*x;
+	sum += qry(3,x,y);
+	return sum;
+}
+
+ll rangequery(int x1, int y1, int x2, int y2){
+	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
+}
+
+void rangeupdate(int x1, int y1, int x2, int y2, ll k){
+	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
+}
+```
+
+### Ordered Multiset with BIT
+
+```c
+const int LOGN = 17;
+int prefix(ll x){ // lower bound prefix search
+	ll sum = 0; int pos = 0;
+	for(int i=LOGN; i>=0; i--)
+		if(pos + (1 << i) < SZ && sum + bit[pos + (1 << i)] < x){
+			sum += bit[pos + (1 << i)];
+			pos += (1 << i); }
+	return pos + 1;
+}
+
+int main(){
 	
-	int cl = 0, cr = 0; insere(0);
-	for(auto &q: query){
-		while(q[1] > cr) insere(++cr);
-		while(q[1] < cr) apaga(cr--);
-		while(q[0] < cl) insere(--cl);
-		while(q[0] > cl) apaga(cl++);
-		answer[q[2]] = solve();
+	multiset<int> ms;
+	while(1){
+		int x; char op; cin>>op;
+		switch(op){
+			case 'i': //insert
+				cin>>x; ms.insert(x); upd(x,1);
+				break;
+			case 'e': //erase
+				cin>>x; ms.erase(ms.find(x)); upd(x,-1);
+				break;
+			case 'l': //quantos less than or equal
+				cin>>x; cout<<qry(x)<<endl;
+				break;
+			case 'k': //qual kth
+				cin>>x; cout<<prefix(x)<<endl;
+				break;
+			case 'p': //print conjunto
+				for(auto a: ms) cout<<a<<' '; cout<<endl;
+				for(int i=1; i<=ms.size(); i++) cout<<prefix(i)<<' '; cout<<endl;
+				break;
+		}
 	}
+	
+	return 0;
+}
+```
+
+# Dijkstra
+
+```c
+vector<pii> g[SZ];
+int d[SZ];
+
+void dijkstra(int ori){
+	memset(d,63,sizeof d);
+	d[ori] = 0;
+
+	typedef array<int,2> vet;
+	priority_queue< vet, vector<vet>, greater<vet> > pq;
+	pq.push( {0,ori} );
+	while(!pq.empty()){
+		int dv = pq.top()[0];
+		int v = pq.top()[1];
+		pq.pop();
+		if(dv > d[v]) continue;
+		for(auto x: g[v]){
+			int u = x.fi;
+			int p = x.se;
+			if(dv + p < d[u]){
+				d[u] = dv + p;
+				pq.push( {d[u], u} );
+			}
+		}
+	}
+}
+```
+
+# Tree Linearization
+
+```c
+vector<int> g[SZ]; // lista de filhos do vertice i
+int peso[SZ]; // peso associado ao vertice i, ou aresta de i para o pai
+int ini[SZ], fim[SZ]; // tempo de inicio e fim do vertice i
+int tempo; // contador do tempo
+int lin[SZ]; // arvore linearizada
+int id[SZ]; // id do vertice correspondente ao tempo i
+
+void linearizar(int v){
+	ini[v] = ++tempo;
+	lin[tempo] = peso[v];
+	id[tempo] = v;
+	for(int i=0; i<g[v].size(); i++){
+		linearizar(g[v][i]);
+	}
+	fim[v] = tempo;
+}
+```
+
+# Lowest Common Ancestor
+
+```c
+vi g[SZ];
+int cont;
+int id[SZ]; // ultimo contador do vertice
+vector<pii> arr; // array pro lca
+
+void linear(int v, int ant, int altura){
+	id[v] = cont++;
+	arr.pb({altura,v});
+	for(auto u: g[v]) if(u!=ant){
+		linear(u, v, altura+1);
+		id[v] = cont++;
+		arr.pb({altura,v});
+	}
+}
+
+pii st[SZ*2][21]; // must be [n][logn+1]
+void buildtable(){
+	int n = arr.size(); int m = log2(n-1)+1;
+	FOR(i,0,n) st[i][0] = arr[i];	
+	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
+		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
+}
+
+void build(int raiz){
+	cont = 0; arr.clear();
+	linear(raiz,raiz,-1);
+	buildtable();
+}
+
+int lca(int i, int j){
+	i = id[i]; j = id[j];
+	if(i==j) return st[i][0].se;
+	if(i>j) swap(i,j);
+	int k = log2(j-i);
+	return min(st[i][k], st[j+1-(1<<k)][k]).se;
+}
+```
+
+Binary Lifting & Query on Tree
+
+```c
+int n,m;
+vector<pii> g[SZ];
+#define LOGN 20
+int parent[SZ][LOGN];
+int height[SZ];
+int query[SZ][LOGN]; //q[i][j] = maior aresta no caminho entre o vertice i e o ancestor 2^j
+
+void init(int v, int p, int h, int q){
+	parent[v][0] = p; height[v] = h; query[v][0] = q;
+	for(auto &u: g[v]) if(u.fi!=p) init(u.fi,v,h+1,u.se);
+}
+void build(){ // é importante que os vertices sejam 1-based e o pai da raiz seja 0
+	init(1,0,0,-INF); // raiz,pai,altura,weight(v->p)
+	FOR(k,1,LOGN) FOR(v,1,n+1){
+		int p = parent[v][k-1];
+		parent[v][k] = parent[p][k-1];
+		query[v][k] = max(query[v][k-1],query[p][k-1]); // edit here
+}}
+int lca(int v, int u){
+	if(height[v] < height[u]) swap(v,u);
+	int x = height[v]-height[u];
+	FOR(k,0,LOGN) if(x&(1<<k)) v = parent[v][k]; // walk x
+	if(v==u) return v;
+	for(int k=LOGN-1; k>=0; k--) if(parent[v][k]!=parent[u][k]){
+		v = parent[v][k]; u = parent[u][k];
+	} return parent[v][0];
+}
+int qry(int v, int u){
+	vi vertices = {v,u}; int ans = -INF; // edit here
+	for(auto t: vertices){
+		int x = height[t]-height[lca(v,u)];
+		FOR(k,0,LOGN) if(x&(1<<k)){
+			ans = max(ans,query[t][k]); // edit here
+			t = parent[t][k];
+	}} return ans;
+}
+```
+
+# Topological Sort
+
+```c
+int grau[SZ]; int n;
+vi g[SZ]; vi res;
+
+bool ord_top(){ // kahn's algorithm
+	priority_queue<int> pq; res.clear();
+	bool vis[SZ]; memset(vis,1,sizeof vis);
+	for(int i=0; i<n; i++) if(grau[i]==0){
+		vis[i] = 0;
+		pq.push(-i);
+	}
+	while(!pq.empty()){
+		int v = -pq.top(); pq.pop();
+		res.pb(v);
+		for(int i=0; i<g[v].size(); i++){
+			int u = g[v][i];
+			if(vis[u]){
+				grau[u]--;
+				if(grau[u] == 0){
+					vis[u] = 0;
+					pq.push(-u);
+	}}}}
+	return res.size() == n;
+}
+```
+
+# SCC Kosaraju
+
+```c
+// http://www.geeksforgeeks.org/strongly-connected-components/
+vi g[SZ], h[SZ]; // grafos indo e voltando
+bool vis[SZ];
+vi res,temp;
+stack<int> s;
+
+void dfs(int v){
+	vis[v] = 0;
+	for(int i=0; i<g[v].size(); i++){
+		if(vis[g[v][i]]) dfs(g[v][i]);
+	} s.push(v);
+}
+
+void dfs2(int v){
+	vis[v] = 0;
+	for(int i=0; i<h[v].size(); i++){
+		if(vis[h[v][i]]) dfs2(h[v][i]);
+	} temp.pb(v);
+}
+
+void kosaraju(){
+	memset(vis,1,sizeof vis);
+	for(int i=1; i<=n; i++){
+		if(vis[i]) dfs(i);
+	}
+	memset(vis,1,sizeof vis); res.clear();
+	while(!s.empty()){
+		temp.clear();
+		if(vis[s.top()]) dfs2(s.top());
+		if(temp.size() > res.size()) res = temp; // maior scc
+		s.pop();
+	}
+}
+```
+
+# Spanning Tree
+
+```c
+vector<pii> g[SZ],h[SZ];
+	
+void prim(){
+	priority_queue< array<int,3> > pq;
+	for(auto p: g[1]) pq.push( {-p.se, p.fi, 1} );
+	bool vis[SZ]; mset(vis,0); vis[1] = 1;
+	while(!pq.empty()){
+		int v = pq.top()[1], u = pq.top()[2];
+		int d = -pq.top()[0]; pq.pop();
+		if(vis[v]) continue; else vis[v]=1;
+		h[v].pb({u,d}); h[u].pb({v,d});
+		for(auto& p: g[v]) pq.push({-p.se, p.fi, v});
+	}
+}
+```
+
+# Travelling Salesman Problem (TSP)
+
+TSP reduzido pra calcular o custo da melhor permutação
+Iterativo:
+
+```c
+int N;
+double h[MAXN][MAXN];
+double tsp[1<<MAXN][MAXN];
+// tsp[S][i] = o custo de visitar todos os
+// nós de S onde i foi o ultimo nó visitado
+
+void build(int ori){
+	memset(tsp,INF,sizeof tsp);
+	for(int i=0; i<N; i++) if(i!=ori) tsp[1<<i][i] = h[ori][i];
+	
+	for(int bit=0; bit<(1<<N); bit++)
+	for(int i=0; i<N; i++) if( bit&(1<<i) )
+	for(int j=0; j<N; j++) if( bit&(1<<j) )
+	if( i!=j )
+	tsp[bit][i] = min( tsp[bit][i], tsp[bit^(1<<i)][j] + h[j][i] );
+}
+```
+
+Recursivo:
+
+```c
+int N, ori, h[MAXN][MAXN], pd[1<<MAXN][MAXN];
+// pd[S][i] = o custo de visitar todos os
+// nós de S onde i foi o ultimo nó visitado
+
+int tsp(int bit, int i){
+	if(pd[bit][i]!=-1) return pd[bit][i];
+	if(bit == (1<<i)){
+		pd[bit][i] = h[ori][i];
+		return pd[bit][i]; }
+	
+	pd[bit][i] = INF;
+	for(int j=0; j<N; j++) if(bit&(1<<j) && i!=j)
+		pd[bit][i] = min(pd[bit][i], tsp(bit^(1<<i),j)+h[j][i] );
+	return pd[bit][i];
+}
+```
+
+# Bipartite Matching (Kuhn's)
+
+```c
+int vis[SZ], b[SZ], tempo;
+vi g[SZ]; //1-based
+
+bool kuhn(int u){
+	if(vis[u]==tempo) return false;
+	vis[u] = tempo;
+	for(int v: g[u]){
+		if( !b[v] || kuhn(b[v]) ){
+			b[v] = u;
+			return true;
+		}
+	}
+	return false;
+}
+
+int matching(int A, int B){
+	for(int i=1; i<=A; i++){
+		tempo++; kuhn(i);
+	}
+	int cont = 0;
+	for(int i=1; i<=B; i++) if(b[i]) cont++;
+	return cont;
 }
 ```
 
@@ -1050,6 +1024,34 @@ do{
 printf("Tamanho da LIS: %d\n", (int)res.size());
 printf("LIS: ");
 for(auto i: res) printf("%d ", i); printf("\n");
+```
+
+# Bitset
+
+```c
+int bs[1000000000/32];
+bool bget(int i){
+	return bs[i>>5]&(1<<(i&31));
+}
+void bset(int i){
+	bs[i>>5] |= (1<<(i&31));
+}
+void breset(int i){
+	bs[i>>5] &= ~(1<<(i&31));
+}
+```
+
+# Inversed Vector
+
+```c
+struct ivi{ // inversed vector<int>
+	vi a;
+	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
+	int& operator[](int i){ return a[a.size()-1-i]; }
+	void push_front(int x){ a.push_back(x); }
+	int size(){ return (int)a.size(); }
+	void swap(ivi& b){ a.swap(b.a); }
+};
 ```
 
 # Matematica
@@ -1336,17 +1338,17 @@ int main(){
 
 # Geometria
 
-```c
+```
 Equação da Circunferência (Centro (a,b) e Raio r)
-	(x-a)²+(y-b)²=r²
+. (x-a)²+(y-b)²=r²
 
 Fórmulas para um triângulo com lados a,b,c
-		Semi-Perímetro => p = (a+b+c)/2
-					Area => A = sqrt(p(p-a)(p-b)(p-c))
-					Area => A = bc.sin(alpha)/2
-				Altura => h = 2A/b
-		Raio Inscrito => r = A/p
-	Raio Curcunscrito => R = (abc)/(4A)
+.    Semi-Perímetro => p = (a+b+c)/2
+.              Area => A = sqrt(p(p-a)(p-b)(p-c))
+.              Area => A = bc.sin(alpha)/2
+.            Altura => h = 2A/b
+.     Raio Inscrito => r = A/p
+. Raio Curcunscrito => R = (abc)/(4A)
 ```
 
 Biblioteca Completa
