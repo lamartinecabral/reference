@@ -11,7 +11,7 @@ ll bin(ll L, ll R){
 }
 ```
 
-# Disjoint Set Union / Union Find
+# DSU / Union Find
 
 ```c
 int pai[SZ]; // inicializar com pai[i] = i;
