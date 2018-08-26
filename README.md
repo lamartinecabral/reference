@@ -1,8 +1,8 @@
-- [Algoritmos](#algoritmos)
+- [**Algoritmos**](#algoritmos)
   - [Binary Search](#binary-search)
   - [Mo's Algorithm](#mos-algorithm)
   - [KMP](#kmp)
-- [Estruturas de Dados](#estruturas-de-dados)
+- [**Estruturas de Dados**](#estruturas-de-dados)
   - [Fenwick Tree (BIT)](#fenwick-tree-bit)
   - [Union Find](#union-find)
   - [Sparse Table](#sparse-table)
@@ -23,7 +23,7 @@
     - [Ordered Multiset](#ordered-multiset)
     - [Bitset](#bitset)
     - [Inversed Vector](#inversed-vector)
-- [Grafos](#grafos)
+- [**Grafos**](#grafos)
   - [Dijkstra](#dijkstra)
   - [Spanning Tree (MST)](#spanning-tree-mst)
   - [Lowest Common Ancestor (LCA)](#lowest-common-ancestor-lca)
@@ -33,10 +33,10 @@
   - [SCC Kosaraju](#scc-kosaraju)
   - [Travelling Salesman Problem (TSP)](#travelling-salesman-problem-tsp)
   - [Bipartite Matching (Kuhn's)](#bipartite-matching-kuhns)
-- [Programação Dinâmica](#programação-dinâmica)
+- [**Programação Dinâmica**](#programação-dinâmica)
   - [Knapsack (Mochila)](#knapsack-mochila)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
-- [Matemática](#matemática)
+- [**Matemática**](#matemática)
   - [MDC e MMC](#mdc-e-mmc)
   - [Euclides Extendido](#euclides-extendido)
   - [Crivo de Eratostenes](#crivo-de-eratostenes)
@@ -47,8 +47,8 @@
   - [Matrizes](#matrizes)
   - [Miller-Rabin's Prime Check & Pollard Rho's Algorithm](#miller-rabins-prime-check--pollard-rhos-algorithm)
   - [Fast Fourier Transform (FFT)](#fast-fourier-transform-fft)
-- [Geometria](#geometria)
-- [Misc](#misc)
+- [**Geometria**](#geometria)
+- [**Misc**](#misc)
   - [Bash Script](#bash-script)
   - [Visual Code Settings](#visual-code-settings)
   - [Template](#template)
@@ -365,8 +365,6 @@ void computeLCP() { //O(n)
 
 ```c
 const int MAX = 1e6;
-int a[SZ];
-
 struct wavelet_tree{
 	int lo, hi;
 	wavelet_tree *l, *r;
@@ -374,6 +372,7 @@ struct wavelet_tree{
 
 	//nos are in range [x,y]
 	//array indices are [from, to)
+	//init: wavelet_tree T(arr+1, arr+n+1, 1, MAX);
 	wavelet_tree(int *from, int *to, int x, int y){
 		lo = x, hi = y;
 		if(lo == hi or from >= to) return;
@@ -391,7 +390,8 @@ struct wavelet_tree{
 		r = new wavelet_tree(pivot, to, mid+1, hi);
 	}
 
-	//kth smallest element in [l, r]
+	//kth smallest element in [l, r].
+	//k belongs to [1,r-l+1]
 	int kth(int l, int r, int k){
 		if(l > r) return 0;
 		if(lo == hi) return lo;
@@ -423,36 +423,6 @@ struct wavelet_tree{
 		delete r;
 	}
 };
-
-int main(){
-	
-	int i,n,k,j,q,l,r,op;
-	cin >> n;
-	for(int i=0; i<n; i++) cin >> a[i+1];
-	wavelet_tree T(a+1, a+n+1, 1, MAX);
-	
-	cin>>q;
-	while(q--){
-		cin>>op;
-		if(op == 0){
-			cerr<<" Kth smallest in [l,r]"<<endl;
-			cin >> l >> r >> k;
-			cout << T.kth(l, r, k) << endl;
-		}
-		if(op == 1){
-			cerr<<" How many x <= K in [l,r]"<<endl;
-			cin >> l >> r >> k;
-			cout << T.LTE(l, r, k) << endl;
-		}
-		if(op == 2){
-			cerr<<" How many x == K in [l,r]"<<endl;
-			cin >> l >> r >> k;
-			cout << T.count(l, r, k) << endl;
-		}
-	}
-	
-	return 0;
-} 
 ```
 
 ### Treap
@@ -547,6 +517,7 @@ struct Treap {
 		return smallerCount(root,key+1)-smallerCount(root,key);
 	}
 	// Retorna o k-th menor elemento
+	// k deve pertencer a [1,size]
 	int kth(int k){
 		auto v = kth(root, k);
 		return v ? v->key : INF;
