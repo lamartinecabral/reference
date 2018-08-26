@@ -27,8 +27,19 @@
 - [Knuth-Morris Pratt](#knuth-morris-pratt)
 - [Longest Increasing Subsequence](#longest-increasing-subsequence)
 - [Minstack / Minqueue](#minstack--minqueue)
-- [Gambiarra's Data Structures]()
+- [Gambiarra's Data Structures](#gambiarras-sata-structures)
+  - [Ordered Multiset](#ordered_multiset)
+  - [Bitset](#bitset)
+  - [Inversed Vector](#inversed-vector)
 - [Matematica](#matematica)
+  - [MDC e MMC](#mdc-e-mmc)
+  - [Euclides Extendido](#euclides-extendido)
+  - [Crivo de Eratostenes](#crivo-de-eratostenes)
+  - [Exponenciação Rápida](#exponenciação-rápida)
+  - [Fatoração](#fatoração)
+  - [Totiente de Euler](#totiente-de-euler)
+  - [Inverso Multiplicativo](#inverso-multiplicativo)
+  - [Matrizes](#matrizes)
 - [Miller-Rabin's Prime Check & Pollard Rho's Algorithm](#miller-rabins-prime-check--pollard-rhos-algorithm)
 - [Fast Fourier Transform (FFT)](#fast-fourier-transform-fft)
 - [Geometria](#geometria)
@@ -1061,7 +1072,7 @@ struct minqueue{
 };
 ```
 
-# Gambiarra Data Set
+# Gambiarra's Data Structures
 
 #### Ordered Multiset
 
