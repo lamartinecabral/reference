@@ -986,8 +986,8 @@ void kosaraju(){
 
 ### Travelling Salesman Problem (TSP)
 
-TSP reduzido pra calcular o custo da melhor permutação
-Iterativo:
+TSP reduzido pra calcular o custo da melhor permutação.
+###### Iterativo:
 
 ```c
 int N;
@@ -1008,7 +1008,7 @@ void build(int ori){
 }
 ```
 
-Recursivo:
+###### Recursivo:
 
 ```c
 int N, ori, h[MAXN][MAXN], pd[1<<MAXN][MAXN];
