@@ -130,15 +130,6 @@ void kmp(){
 ```
 # Estruturas de Dados
 
-### Union Find
-
-```c
-int pai[SZ]; // inicializar com pai[i] = i;
-
-int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
-void uni(int i, int j){ pai[find(i)] = find(j); }
-```
-
 ### Fenwick Tree (BIT)
 
 ```c
@@ -152,6 +143,15 @@ ll qry(int idx) {
 void upd(int idx, ll k){
 	for(int i=idx; i<SZ; i += i&-i) bit[i] += k;
 }
+```
+
+### Union Find
+
+```c
+int pai[SZ]; // inicializar com pai[i] = i;
+
+int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
+void uni(int i, int j){ pai[find(i)] = find(j); }
 ```
 
 ### Sparse Table
