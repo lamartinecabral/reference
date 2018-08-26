@@ -1565,20 +1565,20 @@ then
 	if [ ! -e ${1%.*}.out ] || [ $1 -nt ${1%.*}.out ]
 	then
 		g++ -std=c++11 -Wfatal-errors $1 -o ${1%.*}.out &&
-		echo go &&
+		echo Compilation Succeeded &&
 		./${1%.*}.out
 	else
-		echo go &&
+		echo Compilation Succeeded &&
 		./${1%.*}.out
 	fi
 else
 	if [ ! -e ${1%.*}.out ] || [ $1 -nt ${1%.*}.out ]
 	then
 		g++ -std=c++11 -Wfatal-errors $1 -o ${1%.*}.out &&
-		echo go &&
+		echo Compilation Succeeded &&
 		./${1%.*}.out < $2
 	else
-		echo go &&
+		echo Compilation Succeeded &&
 		./${1%.*}.out < $2
 	fi
 fi
