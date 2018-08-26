@@ -1018,9 +1018,9 @@ struct minqueue{
 	void transfer(){ while(!s1.empty()){ s2.push(s1.top()); s1.pop(); } }
 	bool empty(){ return s1.empty() && s2.empty(); }
 	int size(){ return s1.size()+s2.size(); }
-	void push(int x){ s1.push(x); }
 	void pop(){ if(s2.empty()) transfer(); s2.pop(); }
 	int front(){ if(s2.empty()) transfer(); return s2.top(); }
+	void push(int x){ s1.push(x); }
 	int mini(){
 		if(s2.empty()) transfer();
 		else if(!s1.empty()) return min(s1.mini(),s2.mini());
