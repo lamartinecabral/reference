@@ -999,6 +999,36 @@ printf("LIS: ");
 for(auto i: res) printf("%d ", i); printf("\n");
 ```
 
+# Minstack / Minqueue
+
+```c
+struct minstack{
+	vector< pair<int,int> > s;
+	bool empty(){ return s.empty(); }
+	int size(){ return s.size(); }
+	int top(){ return s.back().fi; }
+	int mini(){ return s.back().se; }
+	void pop(){ return s.pop_back(); }
+	void push(int x){
+		s.push_back({ x, s.empty() ? x : min(x, s.back().se) }); }
+};
+
+struct minqueue{
+	minstack s1,s2;
+	void transfer(){ while(!s1.empty()){ s2.push(s1.top()); s1.pop(); } }
+	bool empty(){ return s1.empty() && s2.empty(); }
+	int size(){ return s1.size()+s2.size(); }
+	void push(int x){ s1.push(x); }
+	void pop(){ if(s2.empty()) transfer(); s2.pop(); }
+	int front(){ if(s2.empty()) transfer(); return s2.top(); }
+	int mini(){
+		if(s2.empty()) transfer();
+		else if(!s1.empty()) return min(s1.mini(),s2.mini());
+		return s2.mini();
+	}
+};
+```
+
 # Gambiarra Data Set
 
 #### Ordered Multiset
