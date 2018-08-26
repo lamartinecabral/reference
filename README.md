@@ -1602,6 +1602,7 @@ fi
 #include <functional> //greater
 #include <algorithm> //sort
 #include <iostream>
+#include <iterator>
 #include <utility> //pair
 #include <sstream>
 #include <cstring> //memset
