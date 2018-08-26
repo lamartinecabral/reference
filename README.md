@@ -185,7 +185,7 @@ void build(){
 	raiz = sqrt(n);
 	FOR(i,0,n) bl[i/raiz] += v[i];
 }
-ll query(int l, int r, int k){
+ll query(int l, int r){
 	ll sum = 0;
 	for(; l<r and l%raiz!=0; l++){
 		sum += v[l];
