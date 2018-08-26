@@ -580,43 +580,35 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 #### Ordered Multiset with BIT
 
 ```c
-const int LOGN = 17;
-int prefix(ll x){ // lower bound prefix search
-	ll sum = 0; int pos = 0;
-	for(int i=LOGN; i>=0; i--)
-		if(pos + (1 << i) < SZ && sum + bit[pos + (1 << i)] < x){
-			sum += bit[pos + (1 << i)];
-			pos += (1 << i); }
-	return pos + 1;
-}
-
-int main(){
+const int N = 1e6+10, LOGN = 20;
+struct ordered_multiset{
 	
-	multiset<int> ms;
-	while(1){
-		int x; char op; cin>>op;
-		switch(op){
-			case 'i': //insert
-				cin>>x; ms.insert(x); upd(x,1);
-				break;
-			case 'e': //erase
-				cin>>x; ms.erase(ms.find(x)); upd(x,-1);
-				break;
-			case 'l': //quantos less than or equal
-				cin>>x; cout<<qry(x)<<endl;
-				break;
-			case 'k': //qual kth
-				cin>>x; cout<<prefix(x)<<endl;
-				break;
-			case 'p': //print conjunto
-				for(auto a: ms) cout<<a<<' '; cout<<endl;
-				for(int i=1; i<=ms.size(); i++) cout<<prefix(i)<<' '; cout<<endl;
-				break;
-		}
+	int bit[N], contador;
+	ordered_multiset(){ memset(bit,0,sizeof bit); contador = 0; }
+	
+	int size(){
+		return contador;
 	}
-	
-	return 0;
-}
+	void insert(int x){ // must be inside [1,N-1]
+		for(int i=x; i<N; i += i&-i) bit[i]++; contador++;
+	}
+	void erase(int x){ // set must contain x
+		for(int i=x; i<N; i += i&-i) bit[i]--; contador--;
+	}
+	int lte(int x){ // how many less than or equal
+		int sum = 0;
+		for(int i=x; i; i -= i&-i) sum += bit[i];
+		return sum;
+	}
+	int kth(int k){ // must be inside [1,N-1]
+		int sum = 0; int pos = 0;
+		for(int i=LOGN; i>=0; i--)
+			if(pos + (1 << i) < N && sum + bit[pos + (1 << i)] < k){
+				sum += bit[pos + (1 << i)];
+				pos += (1 << i); }
+		return pos + 1;
+	}
+};
 ```
 
 # Dijkstra
