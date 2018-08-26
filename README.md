@@ -33,10 +33,10 @@
   - [SCC Kosaraju](#scc-kosaraju)
   - [Travelling Salesman Problem (TSP)](#travelling-salesman-problem-tsp)
   - [Bipartite Matching (Kuhn's)](#bipartite-matching-kuhns)
-- [Programação Dinâmica]()
+- [Programação Dinâmica](#programação-dinâmica)
   - [Knapsack (Mochila)](#knapsack-mochila)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
-- [Matematica](#matematica)
+- [Matemática](#matemática)
   - [MDC e MMC](#mdc-e-mmc)
   - [Euclides Extendido](#euclides-extendido)
   - [Crivo de Eratostenes](#crivo-de-eratostenes)
@@ -51,7 +51,6 @@
 - [Misc](#misc)
   - [Bash Script](#bash-script)
   - [Visual Code Settings](#visual-code-settings)
-  - [Prime Numbers](#prime-numbers)
   - [Template](#template)
 
 # Algoritmos
