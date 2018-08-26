@@ -1,4 +1,6 @@
-# Busca Binaria
+- [Binary Search](#binary-search)
+
+# Binary Search
 
 ```c
 ll bin(ll L, ll R){
