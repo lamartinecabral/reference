@@ -1,10 +1,10 @@
 - [Algoritmos]()
   - [Binary Search](#binary-search)
   - [Mo's Algorithm](#mos-algorithm)
-  - [Knuth-Morris Pratt](#knuth-morris-pratt)
+  - [KMP](#kmp)
 - [Data Structures]()
-  - [Fenwick Tree / Binary Indexed Tree](#fenwick-tree--binary-indexed-tree)
-  - [DSU / Union Find](#dsu--union-find)
+  - [Fenwick Tree (BIT)](#fenwick-tree-bit)
+  - [Union Find](#union-find)
   - [Sparse Table](#sparse-table)
   - [SQRT Decomposition](#sqrt-decomposition)
   - [Ordered Set](#ordered-set)
@@ -12,7 +12,7 @@
   - [Trie](#trie)
   - [Suffix Array & Longest Common Prefix Array](#suffix-array--longest-common-prefix-array)
   - [Wavelet Tree](#wavelet-tree)
-  - [Treap (wjoao)](#treap-wjoao)
+  - [Treap](#treap-wjoao)
   - [Minstack / Minqueue](#minstack--minqueue)
   - [BIT Variations](#bit-variations)
     - [BIT Range Update Range Query](#bit-range-update-range-query)
@@ -25,16 +25,16 @@
     - [Inversed Vector](#inversed-vector)
 - [Grafos]()
   - [Dijkstra](#dijkstra)
-  - [Spanning Tree](#spanning-tree)
-  - [Lowest Common Ancestor](#lowest-common-ancestor)
-	- [With Sparse Table]()
+  - [Spanning Tree (MST)](#spanning-tree)
+  - [Lowest Common Ancestor (LCA)](#lowest-common-ancestor)
+	- [LCA with Sparse Table](#lca-with-sparse-table)
     - [Binary Lifting & Query on Tree](#binary-lifting--query-on-tree)
   - [Topological Sort](#topological-sort)
   - [SCC Kosaraju](#scc-kosaraju)
   - [Travelling Salesman Problem (TSP)](#travelling-salesman-problem-tsp)
   - [Bipartite Matching (Kuhn's)](#bipartite-matching-kuhns)
-- [Programação Dinamica]()
-  - [Knapsack / Mochila 0-1](#knapsack--mochila-0-1)
+- [Programação Dinâmica]()
+  - [Knapsack (Mochila)](#knapsack-mochila)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
 - [Matematica](#matematica)
   - [MDC e MMC](#mdc-e-mmc)
@@ -54,7 +54,9 @@
   - [Prime Numbers](#prime-numbers)
   - [Template](#template)
 
-# Binary Search
+# Algoritmos
+
+### Binary Search
 
 ```c
 ll bin(ll L, ll R){
@@ -67,81 +69,7 @@ ll bin(ll L, ll R){
 }
 ```
 
-# DSU / Union Find
-
-```c
-int pai[SZ]; // inicializar com pai[i] = i;
-
-int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
-void uni(int i, int j){ pai[find(i)] = find(j); }
-```
-
-# Fenwick Tree / Binary Indexed Tree
-
-```c
-ll bit[SZ];
-
-ll qry(int idx) {
-	ll sum = 0;
-	for(int i=idx; i; i -= i&-i) sum += bit[i];
-	return sum;
-}
-void upd(int idx, ll k){
-	for(int i=idx; i<SZ; i += i&-i) bit[i] += k;
-}
-```
-
-# Sparse Table
-
-```c
-vector<int> arr;
-int st[SZ][20];
-
-void build(){
-	int n = arr.size(); int m = log2(n-1)+1;
-	FOR(i,0,n) st[i][0] = arr[i];   
-	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
-		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
-}
-
-int query(int i, int j){
-	if(i==j) return st[i][0];
-	if(i>j) swap(i,j);
-	int k = log2(j-i);
-	return min(st[i][k], st[j+1-(1<<k)][k]);
-}
-```
-
-# SQRT Decomposition
-
-```c
-int n,raiz;
-ll v[100010];
-ll bl[325];
-
-void build(){
-	raiz = sqrt(n);
-	FOR(i,0,n) bl[i/raiz] += v[i];
-}
-ll query(int l, int r, int k){
-	ll sum = 0;
-	for(; l<r and l%raiz!=0; l++){
-		sum += v[l];
-	} for(; l+raiz <= r; l += raiz){
-		sum += bl[l/raiz];
-	} for(; l<=r; l++){
-		sum += v[l];
-	}
-	return sum;
-}
-void pointupdate(int i, ll k){
-	int b = i/raiz;
-	bl[b] += k - v[i];
-	v[i] = k;
-}
-```
-
-# Mo's Algorithm
+### Mo's Algorithm
 
 ```c
 int block;
@@ -174,7 +102,109 @@ void mos(){
 }
 ```
 
-# Ordered Set
+### KMP
+
+```c
+string s1,s2;
+vector<int> b;
+
+void kmppp(){
+	int i=0, j=-1;
+	b = vector<int>(s2.size()+1);
+	b[0] = -1;
+	while(i < s2.size()){
+		while(j >= 0 && s2[i] != s2[j]) j=b[j];
+		i++; j++;
+		b[i] = j;
+}}
+
+void kmp(){
+	int i=0, j=0;
+	while(i < s1.size()){
+		while(j >= 0 && s1[i] != s2[j]) j=b[j];
+		i++; j++;
+		if(j == s2.size()){
+			cout<<"s2 found in s1 at "<< i-j <<endl;
+			j=b[j];
+}}}
+```
+# Estruturas de Dados
+
+### Union Find
+
+```c
+int pai[SZ]; // inicializar com pai[i] = i;
+
+int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
+void uni(int i, int j){ pai[find(i)] = find(j); }
+```
+
+### Fenwick Tree (BIT)
+
+```c
+ll bit[SZ];
+
+ll qry(int idx) {
+	ll sum = 0;
+	for(int i=idx; i; i -= i&-i) sum += bit[i];
+	return sum;
+}
+void upd(int idx, ll k){
+	for(int i=idx; i<SZ; i += i&-i) bit[i] += k;
+}
+```
+
+### Sparse Table
+
+```c
+vector<int> arr;
+int st[SZ][20];
+
+void build(){
+	int n = arr.size(); int m = log2(n-1)+1;
+	FOR(i,0,n) st[i][0] = arr[i];   
+	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
+		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
+}
+
+int query(int i, int j){
+	if(i==j) return st[i][0];
+	if(i>j) swap(i,j);
+	int k = log2(j-i);
+	return min(st[i][k], st[j+1-(1<<k)][k]);
+}
+```
+
+### SQRT Decomposition
+
+```c
+int n,raiz;
+ll v[100010];
+ll bl[325];
+
+void build(){
+	raiz = sqrt(n);
+	FOR(i,0,n) bl[i/raiz] += v[i];
+}
+ll query(int l, int r, int k){
+	ll sum = 0;
+	for(; l<r and l%raiz!=0; l++){
+		sum += v[l];
+	} for(; l+raiz <= r; l += raiz){
+		sum += bl[l/raiz];
+	} for(; l<=r; l++){
+		sum += v[l];
+	}
+	return sum;
+}
+void pointupdate(int i, ll k){
+	int b = i/raiz;
+	bl[b] += k - v[i];
+	v[i] = k;
+}
+```
+
+### Ordered Set
 
 ```c
 #include <ext/pb_ds/assoc_container.hpp>
@@ -187,7 +217,7 @@ using namespace __gnu_pbds;
 // order_of_key(x) = how many elements less than x
 ```
 
-# Segment Tree
+### Segment Tree
 
 ```c
 //#define SZ 1050000
@@ -236,7 +266,7 @@ void pointupdate(int index, var x){
 }
 ```
 
-# Trie
+### Trie
 
 ```c
 struct trienode{
@@ -274,7 +304,7 @@ bool busca(string &s){
 }
 ```
 
-# Suffix Array & Longest Common Prefix Array
+### Suffix Array & Longest Common Prefix Array
 
 ```c
 char str[MAXN]; // the input string, up to 100K characters
@@ -332,7 +362,7 @@ void computeLCP() { //O(n)
 }
 ```
 
-# Wavelet Tree
+### Wavelet Tree
 
 ```c
 const int MAX = 1e6;
@@ -426,7 +456,7 @@ int main(){
 } 
 ```
 
-# Treap (wjoao)
+### Treap
 
 ```c
 struct Node {
@@ -540,9 +570,39 @@ struct Treap {
 };
 ```
 
-# BIT Variations
+### Minstack / Minqueue
 
-#### BIT Range Update Range Query
+```c
+struct minstack{
+	vector< pair<int,int> > s;
+	bool empty(){ return s.empty(); }
+	int size(){ return s.size(); }
+	int top(){ return s.back().fi; }
+	int mini(){ return s.back().se; }
+	void pop(){ return s.pop_back(); }
+	void push(int x){
+		s.push_back({ x, s.empty() ? x : min(x, s.back().se) }); }
+};
+
+struct minqueue{
+	minstack s1,s2;
+	void transfer(){ while(!s1.empty()){ s2.push(s1.top()); s1.pop(); } }
+	bool empty(){ return s1.empty() && s2.empty(); }
+	int size(){ return s1.size()+s2.size(); }
+	void pop(){ if(s2.empty()) transfer(); s2.pop(); }
+	int front(){ if(s2.empty()) transfer(); return s2.top(); }
+	void push(int x){ s1.push(x); }
+	int mini(){
+		if(s2.empty()) transfer();
+		else if(!s1.empty()) return min(s1.mini(),s2.mini());
+		return s2.mini();
+	}
+};
+```
+
+### BIT Variations
+
+##### BIT Range Update Range Query
 
 ```c
 ll bit1[SZ], bit2[SZ];
@@ -562,7 +622,7 @@ void update(int idx, ll x){
 }
 ```
 
-#### BIT 2D
+##### BIT 2D
 
 ```c
 int bit[SZ][SZ];
@@ -589,7 +649,7 @@ void rangeupdate(int x1, int y1, int x2, int y2, var k){
 }
 ```
 
-#### BIT 2D Range Update Range Query
+##### BIT 2D Range Update Range Query
 
 ```c
 ll bit[4][SZ][SZ];
@@ -633,7 +693,7 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 }
 ```
 
-#### Ordered Multiset with BIT
+##### Ordered Multiset with BIT
 
 ```c
 const int N = 1e6+10, LOGN = 20;
@@ -667,7 +727,66 @@ struct ordered_multiset{
 };
 ```
 
-# Dijkstra
+### Gambiarras
+
+##### Ordered Multiset
+
+```c
+#define var pair<int,int>
+#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
+
+int id = 0; map<int,vi> ids;
+void insere(ordered_set &s, int x){
+	s.insert({x,++id}); ids[x].pb(id);
+}
+void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
+	s.erase({x,ids[x].back()}); ids[x].pop_back();
+}
+int kth(ordered_set &s, int x){
+	return s.find_by_order(x)->fi;
+}
+int smallerCount(ordered_set &s, int x){
+	return s.order_of_key({x,0});
+}
+int count(ordered_set &s, int x){
+	return smallerCount(s,x+1)-smallerCount(s,x);
+}
+ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
+	return s.find({x,ids[x].back()});
+}
+```
+
+##### Bitset
+
+```c
+int bs[1000000000/32];
+bool bget(int i){
+	return bs[i>>5]&(1<<(i&31));
+}
+void bset(int i){
+	bs[i>>5] |= (1<<(i&31));
+}
+void breset(int i){
+	bs[i>>5] &= ~(1<<(i&31));
+}
+```
+
+##### Inversed Vector
+
+```c
+struct ivi{ // inversed vector<int>
+	vi a;
+	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
+	int& operator[](int i){ return a[a.size()-1-i]; }
+	void push_front(int x){ a.push_back(x); }
+	int size(){ return (int)a.size(); }
+	void swap(ivi& b){ a.swap(b.a); }
+};
+```
+
+# Grafos
+
+### Dijkstra
 
 ```c
 vector<pii> g[SZ];
@@ -697,7 +816,7 @@ void dijkstra(int ori){
 }
 ```
 
-# Spanning Tree
+### Spanning Tree (MST)
 
 ```c
 vector<pii> g[SZ],h[SZ];
@@ -716,28 +835,9 @@ void prim(){
 }
 ```
 
-# Tree Linearization
+### Lowest Common Ancestor (LCA)
 
-```c
-vector<int> g[SZ]; // lista de filhos do vertice i
-int peso[SZ]; // peso associado ao vertice i, ou aresta de i para o pai
-int ini[SZ], fim[SZ]; // tempo de inicio e fim do vertice i
-int tempo; // contador do tempo
-int lin[SZ]; // arvore linearizada
-int id[SZ]; // id do vertice correspondente ao tempo i
-
-void linearizar(int v){
-	ini[v] = ++tempo;
-	lin[tempo] = peso[v];
-	id[tempo] = v;
-	for(int i=0; i<g[v].size(); i++){
-		linearizar(g[v][i]);
-	}
-	fim[v] = tempo;
-}
-```
-
-# Lowest Common Ancestor
+##### LCA with Sparse Table
 
 ```c
 vi g[SZ];
@@ -778,7 +878,7 @@ int lca(int i, int j){
 }
 ```
 
-#### Binary Lifting & Query on Tree
+##### Binary Lifting & Query on Tree
 
 ```c
 int n,m;
@@ -819,7 +919,7 @@ int qry(int v, int u){
 }
 ```
 
-# Topological Sort
+### Topological Sort
 
 ```c
 int grau[SZ]; int n;
@@ -847,7 +947,7 @@ bool ord_top(){ // kahn's algorithm
 }
 ```
 
-# SCC Kosaraju
+### SCC Kosaraju
 
 ```c
 // http://www.geeksforgeeks.org/strongly-connected-components/
@@ -885,7 +985,7 @@ void kosaraju(){
 }
 ```
 
-# Travelling Salesman Problem (TSP)
+### Travelling Salesman Problem (TSP)
 
 TSP reduzido pra calcular o custo da melhor permutação
 Iterativo:
@@ -929,7 +1029,7 @@ int tsp(int bit, int i){
 }
 ```
 
-# Bipartite Matching (Kuhn's)
+### Bipartite Matching (Kuhn's)
 
 ```c
 int vis[SZ], b[SZ], tempo;
@@ -957,7 +1057,9 @@ int matching(int A, int B){
 }
 ```
 
-# Knapsack / Mochila 0-1
+# Programação Dinâmica
+
+### Knapsack (Mochila)
 
 ```c
 int n,c;
@@ -975,34 +1077,8 @@ void knapsack(){
 }
 ```
 
-# Knuth-Morris Pratt
 
-```c
-string s1,s2;
-vector<int> b;
-
-void kmppp(){
-	int i=0, j=-1;
-	b = vector<int>(s2.size()+1);
-	b[0] = -1;
-	while(i < s2.size()){
-		while(j >= 0 && s2[i] != s2[j]) j=b[j];
-		i++; j++;
-		b[i] = j;
-}}
-
-void kmp(){
-	int i=0, j=0;
-	while(i < s1.size()){
-		while(j >= 0 && s1[i] != s2[j]) j=b[j];
-		i++; j++;
-		if(j == s2.size()){
-			cout<<"s2 found in s1 at "<< i-j <<endl;
-			j=b[j];
-}}}
-```
-
-# Longest Increasing Subsequence
+### Longest Increasing Subsequence
 
 Apenas o tamanho da lista
 
@@ -1047,96 +1123,9 @@ printf("LIS: ");
 for(auto i: res) printf("%d ", i); printf("\n");
 ```
 
-# Minstack / Minqueue
+# Matemática
 
-```c
-struct minstack{
-	vector< pair<int,int> > s;
-	bool empty(){ return s.empty(); }
-	int size(){ return s.size(); }
-	int top(){ return s.back().fi; }
-	int mini(){ return s.back().se; }
-	void pop(){ return s.pop_back(); }
-	void push(int x){
-		s.push_back({ x, s.empty() ? x : min(x, s.back().se) }); }
-};
-
-struct minqueue{
-	minstack s1,s2;
-	void transfer(){ while(!s1.empty()){ s2.push(s1.top()); s1.pop(); } }
-	bool empty(){ return s1.empty() && s2.empty(); }
-	int size(){ return s1.size()+s2.size(); }
-	void pop(){ if(s2.empty()) transfer(); s2.pop(); }
-	int front(){ if(s2.empty()) transfer(); return s2.top(); }
-	void push(int x){ s1.push(x); }
-	int mini(){
-		if(s2.empty()) transfer();
-		else if(!s1.empty()) return min(s1.mini(),s2.mini());
-		return s2.mini();
-	}
-};
-```
-
-# Gambiarras
-
-#### Ordered Multiset
-
-```c
-#define var pair<int,int>
-#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
-
-int id = 0; map<int,vi> ids;
-void insere(ordered_set &s, int x){
-	s.insert({x,++id}); ids[x].pb(id);
-}
-void apaga(ordered_set &s, int x){ if(ids[x].size()==0) return;
-	s.erase({x,ids[x].back()}); ids[x].pop_back();
-}
-int kth(ordered_set &s, int x){
-	return s.find_by_order(x)->fi;
-}
-int smallerCount(ordered_set &s, int x){
-	return s.order_of_key({x,0});
-}
-int count(ordered_set &s, int x){
-	return smallerCount(s,x+1)-smallerCount(s,x);
-}
-ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s.end();
-	return s.find({x,ids[x].back()});
-}
-```
-
-#### Bitset
-
-```c
-int bs[1000000000/32];
-bool bget(int i){
-	return bs[i>>5]&(1<<(i&31));
-}
-void bset(int i){
-	bs[i>>5] |= (1<<(i&31));
-}
-void breset(int i){
-	bs[i>>5] &= ~(1<<(i&31));
-}
-```
-
-#### Inversed Vector
-
-```c
-struct ivi{ // inversed vector<int>
-	vi a;
-	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
-	int& operator[](int i){ return a[a.size()-1-i]; }
-	void push_front(int x){ a.push_back(x); }
-	int size(){ return (int)a.size(); }
-	void swap(ivi& b){ a.swap(b.a); }
-};
-```
-
-# Matematica
-
-#### MDC e MMC
+### MDC e MMC
 
 ```c
 // __gcd(a,b);
@@ -1144,7 +1133,7 @@ int mdc(int a, int b) { return b == 0 ? a : mdc(b, a%b); }
 int mmc(int a, int b) { return a*b/mdc(a, b); }
 ```
 
-#### Euclides Extendido
+### Euclides Extendido
 
 ```c
 int x,y,d;
@@ -1163,7 +1152,7 @@ void extEucl(int a, int b){
 }
 ```
 
-#### Crivo de Eratostenes
+### Crivo de Eratostenes
 
 ```c
 const int N = 1e6;
@@ -1176,12 +1165,11 @@ void build(){
 }}}}
 ```
 
-#### Exponenciação Rápida
+### Exponenciação Rápida
 
 ```c
 ll soma(ll a, ll b, ll c=mod){
-	a += b; while(a>=mod) a-= mod; while(a<0) a+=mod;
-	return a;
+	return (a+b<c ? a+b : (a+b<2*c ? a+b-c : (a+b)%c) );
 }
 ll mult(ll a, ll b, ll c=mod){
 	ll res = 0;
@@ -1201,7 +1189,7 @@ ll fexp(ll a, ll b, ll c=mod){
 }
 ```
 
-#### Fatoração
+### Fatoração
 
 ```c
 map<int,int> fatorar(int n){
@@ -1214,7 +1202,7 @@ map<int,int> fatorar(int n){
 }
 ```
 
-#### Totiente de Euler
+### Totiente de Euler
 
 ```c
 var phi(var n){
@@ -1229,7 +1217,7 @@ var phi(var n){
 }
 ```
 
-#### Inverso Multiplicativo
+### Inverso Multiplicativo
 
 ```c
 /// TIP /// inv(x) = x^(m-2) mod m ??? if m is prime and x<m
@@ -1240,7 +1228,7 @@ var inv(var x, var mod){
 }
 ```
 
-#### Matrizes
+### Matrizes
 
 ```c
 //  F3 = aF2 + bF1 (Recorrencia)
@@ -1268,7 +1256,7 @@ vi powerx(vi &a, int b){
 }
 ```
 
-# Miller-Rabin's Prime Check & Pollard Rho's Algorithm
+### Miller-Rabin's Prime Check & Pollard Rho's Algorithm
 
 O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
@@ -1320,7 +1308,7 @@ ll rho(ll n){
 }
 ```
 
-# Fast Fourier Transform (FFT)
+### Fast Fourier Transform (FFT)
 
 ```c
 //typedef complex<double> base;/*
@@ -1412,7 +1400,7 @@ Fórmulas para um triângulo com lados a,b,c
 . Raio Curcunscrito => R = (abc)/(4A)
 ```
 
-#### Biblioteca Completa
+##### Biblioteca Completa
 
 ```c
 const double EPS = 1e-9;
@@ -1567,7 +1555,7 @@ bool IsSimple(const vector<PT> &p) { //linhas nao se intersectam
 
 # Misc
 
-#### Bash Script
+### Bash Script
 
 ```
 if [ -z $1 ]
@@ -1597,7 +1585,7 @@ else
 fi
 ```
 
-#### Visual Code Settings
+### Visual Code Settings
 
 ```
 "editor.trimAutoWhitespace": false,
@@ -1608,22 +1596,7 @@ fi
 "extensions.ignoreRecommendations": true
 ```
 
-#### Prime Numbers
-
-```
-1061108099	1061108627	1061109073	1061109607
-1061108131	1061108677	1061109079	1061109617
-1061108183	1061108683	1061109089	1061109629
-1061108263	1061108689	1061109097	1061109649
-1061108267	1061108693	1061109107	1061109653
-32416187899	32416188499	32416189081	32416189733
-32416187927	32416188517	32416189163	32416189753
-32416187929	32416188527	32416189181	32416189777
-32416187933	32416188583	32416189193	32416189853
-32416187953	32416188589	32416189231	32416189859
-```
-
-#### Template
+### Template
 
 ```c
 //#include <bits/stdc++.h>/*
