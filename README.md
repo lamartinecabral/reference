@@ -9,6 +9,7 @@
   - [SQRT Decomposition](#sqrt-decomposition)
   - [Ordered Set](#ordered-set)
   - [Segment Tree](#segment-tree)
+    - [Lazy Propagation](#lazy-propagation)
   - [Trie](#trie)
   - [Suffix Array & Longest Common Prefix Array](#suffix-array--longest-common-prefix-array)
   - [Wavelet Tree](#wavelet-tree)
@@ -217,50 +218,99 @@ using namespace __gnu_pbds;
 ### Segment Tree
 
 ```c
-//#define SZ 1050000
-//#define var int
-// MODO DE USAR: build(1,1,n); query(l,r); update(i,x);
-
-int n;
-var seg[SZ]; // 1-rooted
-var arr[SZ]; // 1-based
-var zero;
-
-var mix(var u, var v){
-	if(u==zero) return v;
-	if(v==zero) return u;
-	return u+v;
+const int neutral = 0;
+int comp(int a, int b) {
+	return a+b;
 }
 
-void build(int i, int a, int z){
-	if(a==z){
-		seg[i] = arr[a];
-		return;
+class SegmentTree {
+	vector<int> a;
+	int n;
+public:
+	SegmentTree(int* st, int* en) {
+		int sz = int(en-st);
+		for (n = 1; n < sz; n <<= 1);
+		a.assign(n << 1, neutral);
+		for(int i=0; i<sz; i++) a[i+n] = st[i];
+		for(int i=n+sz-1; i; i--)
+			a[i>>1] = comp(a[i>>1], a[i]);
 	}
-	build(i*2, a, (a+z)/2);
-	build(i*2+1, (a+z)/2+1, z);
-	seg[i] = mix(seg[i*2], seg[i*2+1]);
-}
-
-var qry(int i, int a, int z, int l, int r){
-	if(l<=a && z<=r) return seg[i];
-	if(l>z || r<a) return zero;
-	var u = qry(i*2, a, (a+z)/2, l, r);
-	var v = qry(i*2+1, (a+z)/2+1, z, l, r);
-	return mix(u, v);
-}
-
-var query(int l, int r){ return qry(1,1,n,l,r); }
-
-void pointupdate(int index, var x){
-	int i=1, l=1, r=n;
-	while(l!=r){
-		if((l+r)/2 < index) l = (l+r)/2+1, i = i*2+1;
-		else r = (l+r)/2, i = i*2;
+	void update(int i, int x) {
+		a[i+n] = x; //substitui
+		for (i += n, i >>= 1; i; i >>= 1)
+			a[i] = comp(a[i<<1], a[1+(i<<1)]);
 	}
-	arr[index] = x; seg[i] = x; i/=2;
-	while(i) seg[i] = mix(seg[i*2], seg[i*2+1]), i/=2;
+	int query(int l, int r) {
+		int ans = neutral;
+		for (l += n, r += n+1; l < r; l >>= 1, r >>= 1) {
+			if (l & 1) ans = comp(ans, a[l++]);
+			if (r & 1) ans = comp(ans, a[--r]);
+		}
+		return ans;
+	}
+};
+```
+
+##### Lazy Propagation
+
+```c
+const int neutral = 0; //comp(x, neutral) = x
+int comp(int a, int b) {
+	return a + b;
 }
+
+class SegmentTree {
+private:
+	vector<int> st, lazy;
+	int size;
+#define left(p) (p << 1)
+#define right(p) ((p << 1) + 1)
+	void build(int p, int l, int r, int* A) {
+		if (l == r) { st[p] = A[l]; return; }
+		int m = (l + r) / 2;
+		build(left(p), l, m, A);
+		build(right(p), m+1, r, A);
+		st[p] = comp(st[left(p)], st[right(p)]);
+	}
+	void push(int p, int l, int r) {
+		st[p] += (r - l + 1)*lazy[p];	//Caso RSQ
+		//st[p] += lazy[p]; 		    //Caso RMQ
+		if (l != r) {
+			lazy[right(p)] += lazy[p];
+			lazy[left(p)] += lazy[p];
+		}
+		lazy[p] = 0;
+	}
+	void update(int p, int l, int r, int a, int b, int k) {
+		push(p, l, r);
+		if (a > r || b < l) return;
+		else if (l >= a && r <= b) {
+			lazy[p] = k; push(p, l, r); return;
+		}
+		int m = (l + r) / 2;
+		update(left(p), l, m, a, b, k);
+		update(right(p), m+1, r, a, b, k);
+		st[p] = comp(st[left(p)], st[right(p)]);
+	}
+	int query(int p, int l, int r, int a, int b) {
+		push(p, l, r);
+		if (a > r || b < l) return neutral;
+		if (l >= a && r <= b) return st[p];
+		int m = (l + r) / 2;
+		int p1 = query(left(p), l, m, a, b);
+		int p2 = query(right(p), m+1, r, a, b);
+		return comp(p1, p2);
+	}
+public:
+	SegmentTree(int* bg, int* en) {
+		size = (int)(en - bg);
+		st.assign(4 * size, neutral);
+		lazy.assign(4 * size, 0);
+		build(1, 0, size - 1, bg);
+	}
+	int query(int a, int b) { return query(1, 0, size - 1, a, b); }
+	void update(int a, int b, int k) { update(1, 0, size - 1, a, b, k); }
+};
 ```
 
 ### Trie
