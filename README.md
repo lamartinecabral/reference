@@ -80,15 +80,13 @@ void insere(int i){ }
 void apaga(int i){ }
 int solve(){ }
 
-bool comp(array<int,3> &x, array<int,3> &y){
-	if(x[0]/block != y[0]/block)
-		return x[0] < y[0];
-	return (x[0]/block)&1 ? x[1] > y[1] : x[1] < y[1];
-}
-
 void mos(){
 	block = sqrt(v.size());
-	sort(all(query), comp);
+	sort(all(query), [](array<int,3> &x, array<int,3> &y){
+		if(x[0]/block != y[0]/block)
+			return x[0] < y[0];
+		return (x[0]/block)&1 ? x[1] > y[1] : x[1] < y[1];
+	});
 	
 	int cl = 0, cr = 0; insere(0);
 	for(auto &q: query){
