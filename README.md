@@ -154,22 +154,21 @@ void uni(int i, int j){ pai[find(i)] = find(j); }
 ### Sparse Table
 
 ```c
-vector<int> arr;
-int st[SZ][20];
-
-void build(){
-	int n = arr.size(); int m = log2(n-1)+1;
-	FOR(i,0,n) st[i][0] = arr[i];   
-	for(int j=1,p=2; j<m; j++,p*=2) FOR(i,0,n-p+1)
-		st[i][j] = min( st[i][j-1], st[i+p/2][j-1] );
-}
-
-int query(int i, int j){
-	if(i==j) return st[i][0];
-	if(i>j) swap(i,j);
-	int k = log2(j-i);
-	return min(st[i][k], st[j+1-(1<<k)][k]);
-}
+class SparseTable{
+	int st[100010][17];
+	public:
+	SparseTable(int* bg, int* en) {
+		int n = en-bg;
+		for(int i=0; i<n; i++) st[i][0] = bg[i];
+		for(int j = 1; (1<<j) <= n; j++)
+			for(int i=0; i+(1<<j) <= n; i++)
+				st[i][j] = min(st[i][j-1], st[i+(1<<(j-1))][j-1]);
+	}
+	int query(int l, int r) {
+		int k = log2(r-l+1);
+		return min(st[l][k], st[r+1-(1<<k)][k]);
+	}
+};
 ```
 
 ### SQRT Decomposition
