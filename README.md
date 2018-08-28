@@ -49,6 +49,8 @@
   - [Miller-Rabin's Prime Check & Pollard Rho's Algorithm](#miller-rabins-prime-check--pollard-rhos-algorithm)
   - [Fast Fourier Transform (FFT)](#fast-fourier-transform-fft)
 - [**Geometria**](#geometria)
+  - [Pontos e Linhas](#pontos-e-linhas)
+  - [Biblioteca Completa](#biblioteca-completa)
 - [**Misc**](#misc)
   - [Bash Script](#bash-script)
   - [Visual Code Settings](#visual-code-settings)
@@ -1427,6 +1429,47 @@ Fórmulas para um triângulo com lados a,b,c
 .            Altura => h = 2A/b
 .     Raio Inscrito => r = A/p
 . Raio Curcunscrito => R = (abc)/(4A)
+```
+
+##### Pontos e Linhas
+
+```c
+struct point{
+	double x,y;
+	point(double a, double b){ x=a; y=b; }
+	point operator+(point a) const { return point(x+a.x, y+a.y); }
+	point operator-(point a) const { return point(x-a.x, y-a.y); }
+	point rotate(double a){ //graus
+		a *= PI/180.0; return point( cos(a)*x-sin(a)*y, sin(a)*x+cos(a)*y );
+	}
+};
+struct line{
+	double a,b,c;
+	line(double x, double y, double z){ a=x; b=y; c=z; }
+	line(point A, point B){ a = A.y - B.y; b = B.x - A.x; c = A.x*B.y - A.y*B.x; }
+	point somePoint(double k){
+		return fabs(b)>EPS ? point(k, -(a*k + c)/b ) : point( -(b*k + c)/a ,k);
+	}
+};
+double dist2(point a, point b){
+	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
+}
+// checa se o ponto C esta no segmento AB
+bool isInSegment(point c, point a, point b){
+	return fabs( sqrt(dist2(a,c)) + sqrt(dist2(b,c)) - sqrt(dist2(a,b)) ) < EPS;
+}
+array<double,3> det(line r, line s){
+	return {r.b*s.c - r.c*s.b, r.c*s.a - r.a*s.c, r.a*s.b - r.b*s.a};
+}
+bool isParallel(line r, line s){
+	return fabs(det(r,s)[2]) < EPS;
+}
+point intersection(line r, line s){
+	auto res = det(r,s);
+	return point(res[0]/res[2], res[1]/res[2]);
+}
+ostream &operator<<(ostream &os, const point &p){return os<<"("<<p.x<<","<<p.y<<")";}
+ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<","<<r.c<<")";}
 ```
 
 ##### Biblioteca Completa
