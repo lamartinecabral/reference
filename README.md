@@ -1434,6 +1434,7 @@ Fórmulas para um triângulo com lados a,b,c
 ##### Pontos e Linhas
 
 ```c
+template<class T> bool inOrder(T& a, T& b, T& c){ return a<=b+EPS && b<=c+EPS; }
 struct point{
 	double x,y;
 	point(double a, double b){ x=a; y=b; }
@@ -1441,6 +1442,15 @@ struct point{
 	point operator-(point a) const { return point(x-a.x, y-a.y); }
 	point rotate(double a){ //graus
 		a *= PI/180.0; return point( cos(a)*x-sin(a)*y, sin(a)*x+cos(a)*y );
+	}
+	bool isInSegment(point a, point b){
+		return (
+			(inOrder(a.x,x,b.x) || inOrder(b.x,x,a.x)) &&
+			(inOrder(a.y,y,b.y) || inOrder(b.y,y,a.y))
+		) && fabs(
+			(a.x*b.y + b.x*y + x*a.y) -
+			(a.y*b.x + b.y*x + y*a.x)
+		) < EPS;
 	}
 };
 struct line{
@@ -1453,17 +1463,6 @@ struct line{
 };
 double dist2(point a, point b){
 	return (a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y);
-}
-template<class T> bool inOrder(T& a, T& b, T& c){ return a<=b+EPS && b<=c+EPS; }
-// checa se o ponto B esta no segmento AC
-bool isInSegment(point a, point b, point c){
-	return (
-		(inOrder(a.x,b.x,c.x) || inOrder(c.x,b.x,a.x)) &&
-		(inOrder(a.y,b.y,c.y) || inOrder(c.y,b.y,a.y))
-	) && fabs(
-		(a.x*b.y + b.x*c.y + c.x*a.y) -
-		(a.y*b.x + b.y*c.x + c.y*a.x)
-	) < EPS;
 }
 array<double,3> det(line r, line s){
 	return {r.b*s.c - r.c*s.b, r.c*s.a - r.a*s.c, r.a*s.b - r.b*s.a};
