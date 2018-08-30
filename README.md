@@ -1475,7 +1475,7 @@ point intersection(line r, line s){
 	return point(res[0]/res[2], res[1]/res[2]);
 }
 ostream &operator<<(ostream &os, const point &p){return os<<"("<<p.x<<","<<p.y<<")";}
-ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<","<<r.c<<")";}
+ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<","<<r.c<<"]";}
 ```
 
 ##### Biblioteca Completa
