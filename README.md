@@ -1461,8 +1461,8 @@ bool isInSegment(point a, point b, point c){
 		(inOrder(a.x,b.x,c.x) || inOrder(c.x,b.x,a.x)) &&
 		(inOrder(a.y,b.y,c.y) || inOrder(c.y,b.y,a.y))
 	) && fabs(
-		(a.x*b.y + b.x*c.y + a.x*c.y) -
-		(a.y*b.x + b.y*c.x + a.y*c.x)
+		(a.x*b.y + b.x*c.y + c.x*a.y) -
+		(a.y*b.x + b.y*c.x + c.y*a.x)
 	) < EPS;
 }
 array<double,3> det(line r, line s){
