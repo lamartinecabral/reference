@@ -1437,6 +1437,7 @@ Fórmulas para um triângulo com lados a,b,c
 template<class T> bool inOrder(T& a, T& b, T& c){ return a<=b+EPS && b<=c+EPS; }
 struct point{
 	double x,y;
+	point(){ x=y=0.0; }
 	point(double a, double b){ x=a; y=b; }
 	point operator+(point a) const { return point(x+a.x, y+a.y); }
 	point operator-(point a) const { return point(x-a.x, y-a.y); }
@@ -1481,48 +1482,33 @@ ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<"
 ##### Biblioteca Completa
 
 ```c
-const double EPS = 1e-9;
-const double PI = acos(-1);
+const double EPS = 1e-12;
 struct PT {
 	double x, y;
-	PT(){ x = y = 0.0; }
-	PT(double _x, double _y) : x(_x), y(_y) {}
-	PT operator - (PT other) const {return PT(x-other.x, y-other.y);}
-	PT operator + (PT other) const {return PT(x+other.x, y+other.y);}
+	PT() {}
+	PT(double x, double y) : x(x), y(y) {}
+	PT(const PT &p) : x(p.x), y(p.y) {}
+	PT operator + (const PT &p) const { return PT(x+p.x, y+p.y); }
+	PT operator - (const PT &p) const { return PT(x-p.x, y-p.y); }
 	PT operator * (double c) const { return PT(x*c, y*c ); }
 	PT operator / (double c) const { return PT(x/c, y/c ); }
-	bool operator == (PT other) const {
-		return fabs(x - other.x) < EPS && fabs(y - other.y) < EPS; }
-	bool operator < (PT other) const {
-		if(fabs(x - other.x) > EPS) return x < other.x; return y < other.y; }
-	
-	double dist(PT other){
-		return hypot(x - other.x, y - other.y);
-	}
-	bool isBetween(PT p, PT q){ //maior ou igual
-		return fabs(this->dist(p)+this->dist(q)-p.dist(q)) < EPS;
-	}
-	PT rotate(double rad, PT ori = PT(0.0,0.0)) { //CCW
-		PT p = *this - ori;
-		return PT(p.x*cos(rad)-p.y*sin(rad), p.x*sin(rad)+p.y*cos(rad)) + ori;
-	}
-	PT rotate90(int n=1, PT ori = PT(0.0,0.0)) { //CCW
-		PT p = PT(x,y)-ori; n = n%4; if(n<0) n+=4;
-		while(n--) p = PT(-p.y,p.x);
-		return p+ori;
-	}
-	bool domina(PT other){
-		return (fabs(x-other.x) < EPS || x > other.x) && (fabs(y-other.y) < EPS || y > other.y);
-	}
 };
-double dot(PT p, PT q){ return p.x*q.x+p.y*q.y; }
-double cross(PT p, PT q){ return p.x*q.y-p.y*q.x; }
-double dist2(PT p, PT q){ return dot(p-q,p-q); }
-ostream &operator<<(ostream &os, const PT &p){ return os<<"("<<p.x<<","<<p.y<<")"; }
-
-PT ProjectPointLine(PT a, PT b, PT c) { // a != b
+double dot(PT p, PT q) { return p.x*q.x+p.y*q.y; }
+double dist2(PT p, PT q) { return dot(p-q,p-q); }
+double cross(PT p, PT q) { return p.x*q.y-p.y*q.x; }
+ostream &operator<<(ostream &os, const PT &p) {os<<"("<<p.x<<","<<p.y<<")";}
+// rotate a point CCW or CW around the origin
+PT RotateCCW90(PT p) { return PT(-p.y,p.x); }
+PT RotateCW90(PT p) { return PT(p.y,-p.x); }
+PT RotateCCW(PT p, double t) {
+	return PT(p.x*cos(t)-p.y*sin(t), p.x*sin(t)+p.y*cos(t));
+}
+// project point c onto line through a and b
+// assuming a != b
+PT ProjectPointLine(PT a, PT b, PT c) {
 	return a + (b-a)*dot(c-a, b-a)/dot(b-a, b-a);
 }
+// project point c onto line segment through a and b
 PT ProjectPointSegment(PT a, PT b, PT c) {
 	double r = dot(b-a,b-a);
 	if (fabs(r) < EPS) return a;
@@ -1531,12 +1517,16 @@ PT ProjectPointSegment(PT a, PT b, PT c) {
 	if (r > 1) return b;
 	return a + (b-a)*r;
 }
+// compute distance from c to segment between a and b
 double DistancePointSegment(PT a, PT b, PT c) {
 	return sqrt(dist2(c, ProjectPointSegment(a, b, c)));
 }
-double DistancePointPlane(double x, double y, double z, double a, double b, double c, double d){
+// compute distance between point (x,y,z) and plane ax+by+cz=d
+double DistancePointPlane(double x, double y, double z,
+double a, double b, double c, double d){
 	return fabs(a*x+b*y+c*z-d)/sqrt(a*a+b*b+c*c);
 }
+// determine if lines from a to b and c to d are parallel or collinear
 bool LinesParallel(PT a, PT b, PT c, PT d) {
 	return fabs(cross(b-a, c-d)) < EPS;
 }
@@ -1545,6 +1535,8 @@ bool LinesCollinear(PT a, PT b, PT c, PT d) {
 		&& fabs(cross(a-b, a-c)) < EPS
 		&& fabs(cross(c-d, c-a)) < EPS;
 }
+// determine if line segment from a to b intersects with
+// line segment from c to d
 bool SegmentsIntersect(PT a, PT b, PT c, PT d) {
 	if (LinesCollinear(a, b, c, d)) {
 		if (dist2(a, c) < EPS || dist2(a, d) < EPS ||
@@ -1557,69 +1549,104 @@ bool SegmentsIntersect(PT a, PT b, PT c, PT d) {
 	if (cross(a-c, d-c) * cross(b-c, d-c) > 0) return false;
 	return true;
 }
+// compute intersection of line passing through a and b
+// with line passing through c and d, assuming that unique
+// intersection exists; for segment intersection, check if
+// segments intersect first
 PT ComputeLineIntersection(PT a, PT b, PT c, PT d) {
 	b=b-a; d=c-d; c=c-a;
 	assert(dot(b, b) > EPS && dot(d, d) > EPS);
 	return a + b*cross(c, d)/cross(b, d);
 }
+// compute center of circle given three points
 PT ComputeCircleCenter(PT a, PT b, PT c) {
-	b=(a+b)/2; c=(a+c)/2;
-	return ComputeLineIntersection(b, b+(a-b).rotate90(-1), c, c+(a-c).rotate90(-1));
+	b=(a+b)/2;
+	c=(a+c)/2;
+	return ComputeLineIntersection(b, b+RotateCW90(a-b), c, c+RotateCW90(a-c));
 }
+// determine if point is in a possibly non-convex polygon (by William
+// Randolph Franklin); returns 1 for strictly interior points, 0 for
+// strictly exterior points, and 0 or 1 for the remaining points.
+// Note that it is possible to convert this into an *exact* test using
+// integer arithmetic by taking care of the division appropriately
+// (making sure to deal with signs properly) and then by writing exact
+// tests for checking point on polygon boundary
 bool PointInPolygon(const vector<PT> &p, PT q) {
 	bool c = 0;
 	for (int i = 0; i < p.size(); i++){
 		int j = (i+1)%p.size();
-		if ((p[i].y <= q.y && q.y < p[j].y || p[j].y <= q.y && q.y < p[i].y) &&
+		if ((p[i].y <= q.y && q.y < p[j].y ||
+			p[j].y <= q.y && q.y < p[i].y) &&
 			q.x < p[i].x + (p[j].x - p[i].x) * (q.y - p[i].y) / (p[j].y - p[i].y))
 				c = !c;
 	}
 	return c;
 }
+// determine if point is on the boundary of a polygon
 bool PointOnPolygon(const vector<PT> &p, PT q) {
 	for (int i = 0; i < p.size(); i++)
 		if (dist2(ProjectPointSegment(p[i], p[(i+1)%p.size()], q), q) < EPS)
 			return true;
 	return false;
 }
+// compute intersection of line through points a and b with
+// circle centered at c with radius r > 0
 vector<PT> CircleLineIntersection(PT a, PT b, PT c, double r) {
-	vector<PT> ret; b = b-a; a = a-c;
-	double A = dot(b, b); double B = dot(a, b);
-	double C = dot(a, a) - r*r; double D = B*B - A*C;
+	vector<PT> ret;
+	b = b-a;
+	a = a-c;
+	double A = dot(b, b);
+	double B = dot(a, b);
+	double C = dot(a, a) - r*r;
+	double D = B*B - A*C;
 	if (D < -EPS) return ret;
 	ret.push_back(c+a+b*(-B+sqrt(D+EPS))/A);
-	if (D > EPS) ret.push_back(c+a+b*(-B-sqrt(D))/A);
+	if (D > EPS)
+		ret.push_back(c+a+b*(-B-sqrt(D))/A);
 	return ret;
 }
+// compute intersection of circle centered at a with radius r
+// with circle centered at b with radius R
 vector<PT> CircleCircleIntersection(PT a, PT b, double r, double R) {
-	vector<PT> ret; double d = sqrt(dist2(a, b));
+	vector<PT> ret;
+	double d = sqrt(dist2(a, b));
 	if (d > r+R || d+min(r, R) < max(r, R)) return ret;
 	double x = (d*d-R*R+r*r)/(2*d);
 	double y = sqrt(r*r-x*x);
 	PT v = (b-a)/d;
-	ret.push_back(a+v*x + v.rotate90()*y);
-	if (y > 0) ret.push_back(a+v*x - v.rotate90()*y);
+	ret.push_back(a+v*x + RotateCCW90(v)*y);
+	if (y > 0)
+		ret.push_back(a+v*x - RotateCCW90(v)*y);
 	return ret;
 }
+// This code computes the area or centroid of a (possibly nonconvex)
+// polygon, assuming that the coordinates are listed in a clockwise or
+// counterclockwise fashion. Note that the centroid is often known as
+// the "center of gravity" or "center of mass".
 double ComputeSignedArea(const vector<PT> &p) {
 	double area = 0;
 	for(int i = 0; i < p.size(); i++) {
 		int j = (i+1) % p.size();
 		area += p[i].x*p[j].y - p[j].x*p[i].y;
-	} return area / 2.0;
+	}
+	return area / 2.0;
 }
 double ComputeArea(const vector<PT> &p) {
 	return fabs(ComputeSignedArea(p));
 }
-PT ComputeCentroid(const vector<PT> &p) { //centro de gravidade
+// gravity center
+PT ComputeCentroid(const vector<PT> &p) {
 	PT c(0,0);
 	double scale = 6.0 * ComputeSignedArea(p);
 	for (int i = 0; i < p.size(); i++){
 		int j = (i+1) % p.size();
 		c = c + (p[i]+p[j])*(p[i].x*p[j].y - p[j].x*p[i].y);
-	} return c / scale;
+	}
+	return c / scale;
 }
-bool IsSimple(const vector<PT> &p) { //linhas nao se intersectam
+// tests whether or not a given polygon (in CW or CCW order) is simple
+// segments do not intersect
+bool IsSimple(const vector<PT> &p) {
 	for (int i = 0; i < p.size(); i++) {
 		for (int k = i+1; k < p.size(); k++) {
 			int j = (i+1) % p.size();
@@ -1627,7 +1654,9 @@ bool IsSimple(const vector<PT> &p) { //linhas nao se intersectam
 			if (i == l || j == k) continue;
 			if (SegmentsIntersect(p[i], p[j], p[k], p[l]))
 				return false;
-	}} return true;
+		}
+	}
+	return true;
 }
 ```
 
