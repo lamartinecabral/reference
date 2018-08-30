@@ -1482,7 +1482,6 @@ ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<"
 ##### Biblioteca Completa
 
 ```c
-const double EPS = 1e-12;
 struct PT {
 	double x, y;
 	PT() {}
@@ -1492,9 +1491,15 @@ struct PT {
 	PT operator - (const PT &p) const { return PT(x-p.x, y-p.y); }
 	PT operator * (double c) const { return PT(x*c, y*c ); }
 	PT operator / (double c) const { return PT(x/c, y/c ); }
+	bool operator == (PT p) const {
+		return (fabs(x-p.x) < EPS && (fabs(y-p.y) < EPS)); };
+	bool operator < (PT p) const {
+		if(fabs(x-p.x) > EPS) return x<p.x; return y<p.y; };
 };
+// dot(p,q) = length(p)*length(q)*cos(angle between p and q)
 double dot(PT p, PT q) { return p.x*q.x+p.y*q.y; }
 double dist2(PT p, PT q) { return dot(p-q,p-q); }
+double dist(PT p, PT q) { return sqrt(dist2(p,q)); }
 double cross(PT p, PT q) { return p.x*q.y-p.y*q.x; }
 ostream &operator<<(ostream &os, const PT &p) {os<<"("<<p.x<<","<<p.y<<")";}
 // rotate a point CCW or CW around the origin
@@ -1502,6 +1507,14 @@ PT RotateCCW90(PT p) { return PT(-p.y,p.x); }
 PT RotateCW90(PT p) { return PT(p.y,-p.x); }
 PT RotateCCW(PT p, double t) {
 	return PT(p.x*cos(t)-p.y*sin(t), p.x*sin(t)+p.y*cos(t));
+}
+// returns angle aob in rad
+double angle(PT a, PT o, PT b){
+	return acos(dot(a-o,b-o)/sqrt(dot(a-o,a-o)*dot(b-o,b-o)));
+}
+// returns true if point r is on the left side of line pq
+bool ccw(PT p, PT q, PT r) {
+	return cross(p,q)+cross(q,r)+cross(r,p) > 0;
 }
 // project point c onto line through a and b
 // assuming a != b
