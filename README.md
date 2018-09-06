@@ -1728,8 +1728,8 @@ fi
 #include <sstream>
 #include <cstring> //memset
 #include <complex>
-#include <random>
 #include <cassert>
+#include <random>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -1764,7 +1764,7 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
-#define BUFF ios::sync_with_stdio(false);cin.tie(0);
+#define BUFF ios::sync_with_stdio(false);cin.tie(0)
 #define FOR(X,L,R) for(int X=L;X<R;X++)
 #define FIR(X,R,L) for(int X=R;X>=L;X--)
 #define FI(I,X) for(auto I=(X).begin();I!=(X).end();I++)
@@ -1778,7 +1778,7 @@ const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 2e5+20;
 
-int32_t main(){
+int32_t main(){ BUFF;
 
 	return 0;
 }
