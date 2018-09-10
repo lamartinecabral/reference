@@ -37,6 +37,7 @@
 - [**Programação Dinâmica**](#programação-dinâmica)
   - [Knapsack (Mochila)](#knapsack-mochila)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
+  - [Digit DP](#digit-dp)
 - [**Matemática**](#matemática)
   - [MDC e MMC](#mdc-e-mmc)
   - [Euclides Extendido](#euclides-extendido)
@@ -1154,6 +1155,25 @@ printf("LIS: ");
 for(auto i: res) printf("%d ", i); printf("\n");
 ```
 
+### Digit DP
+
+```c
+int dp(int i, int k, int f){
+	if(pd[i][k][f] != -1) return pd[i][k][f];
+	if(i == dig.size()) return test(k) ? 1: 0;
+	int res = 0;
+	FOR(x,0,10) if(f || x<=dig[i])
+		res += dp(i+1, k+x, f||x<dig[i]);
+	return pd[i][k][f] = res;
+}
+ 
+int query(int k){
+	char str[22]; sprintf(str, "%lld", k);
+	dig = str; for(auto& c: dig) c -= '0';
+	mset(pd,-1); return dp(0,0,0);
+}
+```
+
 # Matemática
 
 ### MDC e MMC
@@ -1744,7 +1764,7 @@ fi
 #include <set>
 //*/
 
-#define int int32_t
+#define int long long
 #define uns unsigned
 #define ll long long
 #define vi vector<int>
