@@ -1158,6 +1158,8 @@ for(auto i: res) printf("%d ", i); printf("\n");
 ### Digit DP
 
 ```c
+int pd[22][200][2]; string dig;
+
 int dp(int i, int k, int f){
 	if(pd[i][k][f] != -1) return pd[i][k][f];
 	if(i == dig.size()) return test(k) ? 1: 0;
