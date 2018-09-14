@@ -158,9 +158,8 @@ void uni(int i, int j){ pai[find(i)] = find(j); }
 ### Sparse Table
 
 ```c
-class SparseTable{
+struct SparseTable{
 	int st[100010][17];
-	public:
 	SparseTable(int* bg, int* en) {
 		int n = en-bg;
 		for(int i=0; i<n; i++) st[i][0] = bg[i];
@@ -225,8 +224,7 @@ int comp(int a, int b) {
 	return a + b;
 }
 
-class SegmentTree {
-private:
+struct SegmentTree {
 	vector<int> st;
 	int size;
 #define left(p) (p << 1)
@@ -254,7 +252,7 @@ private:
 		int p2 = query(right(p), m+1, r, a, b);
 		return comp(p1, p2);
 	}
-public:
+	
 	SegmentTree(int* bg, int* en) {
 		size = (int)(en - bg);
 		st.assign(4 * size, neutral);
@@ -273,8 +271,7 @@ int comp(int a, int b) {
 	return a + b;
 }
 
-class SegmentTree {
-private:
+struct SegmentTree {
 	vector<int> st, lazy;
 	int size;
 #define left(p) (p << 1)
@@ -315,7 +312,7 @@ private:
 		int p2 = query(right(p), m+1, r, a, b);
 		return comp(p1, p2);
 	}
-public:
+
 	SegmentTree(int* bg, int* en) {
 		size = (int)(en - bg);
 		st.assign(4 * size, neutral);
