@@ -34,6 +34,7 @@
   - [SCC Kosaraju](#scc-kosaraju)
   - [Travelling Salesman Problem (TSP)](#travelling-salesman-problem-tsp)
   - [Bipartite Matching (Kuhn's)](#bipartite-matching-kuhns)
+  - [Maximum Flow](#maximum-flow)
 - [**Programação Dinâmica**](#programação-dinâmica)
   - [Knapsack (Mochila)](#knapsack-mochila)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
@@ -1083,6 +1084,87 @@ int matching(int A, int B){
 	int cont = 0;
 	for(int i=1; i<=B; i++) if(b[i]) cont++;
 	return cont;
+}
+```
+
+### Maximum Flow
+
+```c
+// O(V*V*E)
+struct Edge{
+	int v, flow, C;
+	int rev; // To store index of reverse edge in adjlist
+};
+struct Graph{
+	int V;
+	int *level;
+	vector< Edge > *adj;
+	Graph(int V){
+		adj = new vector<Edge>[V];
+		this->V = V;
+		level = new int[V];
+	}
+	void addEdge(int u, int v, int C){
+		Edge a{v, 0, C, (int)adj[v].size()};
+		Edge b{u, 0, 0, (int)adj[u].size()};
+		adj[u].push_back(a);
+		adj[v].push_back(b);
+	}
+	bool BFS(int s, int t);
+	int sendFlow(int s, int flow, int t, int ptr[]);
+	int DinicMaxflow(int s, int t);
+};
+
+bool Graph::BFS(int s, int t){
+	FOR(i,0,V) level[i] = -1;
+	level[s] = 0;
+	list< int > q;
+	q.push_back(s);
+	vector<Edge>::iterator i ;
+	while (!q.empty()){
+		int u = q.front();
+		q.pop_front();
+		for (i = adj[u].begin(); i != adj[u].end(); i++){
+			Edge &e = *i;
+			if (level[e.v] < 0  && e.flow < e.C){
+				level[e.v] = level[u] + 1;
+				q.push_back(e.v);
+	}}}
+	return level[t] < 0 ? false : true ;
+}
+
+int Graph::sendFlow(int u, int flow, int t, int start[]){
+	if (u == t) return flow;
+	for (  ; start[u] < adj[u].size(); start[u]++){
+		Edge &e = adj[u][start[u]];
+		if (level[e.v] == level[u]+1 && e.flow < e.C){
+			int curr_flow = min(flow, e.C - e.flow);
+			int temp_flow = sendFlow(e.v, curr_flow, t, start);
+			if (temp_flow > 0){
+				e.flow += temp_flow;
+				adj[e.v][e.rev].flow -= temp_flow;
+				return temp_flow;
+	}}}
+	return 0;
+}
+
+int Graph::DinicMaxflow(int s, int t){
+	if (s == t) return -1;
+	int total = 0;
+	while (BFS(s, t) == true){
+		int *start = new int[V+1];
+		while (int flow = sendFlow(s, INF, t, start))
+			total += flow;
+	} return total;
+}
+
+vector< array<int,3> > lista_de_arestas; // {u,v,c}
+
+int calcula_fluxo(int s, int t){
+	Graph g(t+1); // quantos vertices. source=0 sink=n-1
+	for(auto a: lista_de_arestas)
+		g.addEdge(a[0],a[1],a[2]);
+	return g.DinicMaxflow(s,t);
 }
 ```
 
