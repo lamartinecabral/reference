@@ -814,6 +814,14 @@ struct ivi{ // inversed vector<int>
 };
 ```
 
+##### 128bit integer
+
+```c
+#define lll __int128_t
+ostream &operator<<(ostream &os, lll n){
+	string s = ""; while(n){ s+='0'+n%10; n/=10; } reverse(all(s)); return os<<s; }
+```
+
 # Grafos
 
 ### Dijkstra
@@ -1300,24 +1308,12 @@ void build(){
 ### Exponenciação Rápida
 
 ```c
-ll soma(ll a, ll b, ll c=mod){
-	return (a+b<c ? a+b : (a+b<2*c ? a+b-c : (a+b)%c) );
-}
-ll mult(ll a, ll b, ll c=mod){
-	ll res = 0;
-	while(b){
-		if(b&1) res = soma(res, a, c);
-		a = soma(a, a, c);
-		b /= 2;}
-	return res;
-}
-ll fexp(ll a, ll b, ll c=mod){
+ll fexp(ll a, ll b, ll c){
 	ll res = 1;
 	while(b){
-		if(b&1) res = mult(res, a, c);
-		a = mult(a, a, c);
-		b /= 2;}
-	return res;
+		if(b&1) res = (res*a)%c;
+		a = (a*a)%c; b >>= 1;
+	} return res;
 }
 ```
 
@@ -1390,22 +1386,21 @@ vi powerx(vi &a, int b){
 
 ### Miller-Rabin's Prime Check & Pollard Rho's Algorithm
 
-O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna o um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario verificar se o numero é composto com o teste de primalidade Miller-Rabin.
+O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario primeiro verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
-ll modSum(ll a, ll b, ll c){
+#define lll __int128_t
+
+inline ll modSum(ll a, ll b, ll c){
 	return a+b >= c ? (a+b)%c : a+b;
 }
-ll modMul(ll a, ll b, ll c){
-	ll res = 0; while(b){
-		if(b & 1) res = modSum(res, a, c);
-		a = modSum(a, a, c); b /= 2;
-	} return res;
+inline ll modMul(lll a, lll b, lll c){
+	return (ll)((a*b)%c);
 }
-ll modExp(ll a, ll b, ll c){
+inline ll modExp(lll a, lll b, lll c){
 	ll res = 1; while(b){
-		if(b & 1) res = modMul(res, a, c);
-		a = modMul(a, a, c); b /= 2;
+		if(b & 1) res = modMul(res,a,c);
+		a = modMul(a,a,c); b >>= 1;
 	} return res;
 }
 
