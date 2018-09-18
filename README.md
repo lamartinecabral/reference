@@ -1151,12 +1151,12 @@ int dinic(){
 	} return flow;
 }
 
-vector< array<int,4> > lista_de_arestas;
+vector< array<int,3> > lista_de_arestas;
  
-int calcula_fluxo(int quantos_vertices, int k){
+int calcula_fluxo(int quantos_vertices){
 	n = quantos_vertices; s = 0; t = n-1;
     e.clear(); FOR(i,0,n) g[i].clear();
-    for(auto a: lista_de_arestas) if(a[3] <= k)
+    for(auto a: lista_de_arestas)
         add_edge(a[0],a[1],a[2]);
     return dinic();
 }
