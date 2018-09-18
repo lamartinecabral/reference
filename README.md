@@ -1101,80 +1101,64 @@ int matching(int A, int B){
 
 ```c
 // O(V*V*E)
-struct Edge{
-	int v, flow, C;
-	int rev; // To store index of reverse edge in adjlist
-};
-struct Graph{
-	int V;
-	int *level;
-	vector< Edge > *adj;
-	Graph(int V){
-		adj = new vector<Edge>[V];
-		this->V = V;
-		level = new int[V];
-	}
-	void addEdge(int u, int v, int C){
-		Edge a{v, 0, C, (int)adj[v].size()};
-		Edge b{u, 0, 0, (int)adj[u].size()};
-		adj[u].push_back(a);
-		adj[v].push_back(b);
-	}
-	bool BFS(int s, int t);
-	int sendFlow(int s, int flow, int t, int ptr[]);
-	int DinicMaxflow(int s, int t);
-};
+const int MAXN = 1e5;
+struct edge { int a, b, cap, flow; };
 
-bool Graph::BFS(int s, int t){
-	FOR(i,0,V) level[i] = -1;
-	level[s] = 0;
-	list< int > q;
-	q.push_back(s);
-	vector<Edge>::iterator i ;
-	while (!q.empty()){
-		int u = q.front();
-		q.pop_front();
-		for (i = adj[u].begin(); i != adj[u].end(); i++){
-			Edge &e = *i;
-			if (level[e.v] < 0  && e.flow < e.C){
-				level[e.v] = level[u] + 1;
-				q.push_back(e.v);
-	}}}
-	return level[t] < 0 ? false : true ;
+int n, s, t, d[MAXN], ptr[MAXN], q[MAXN];
+vector<edge> e;
+vector<int> g[MAXN];
+
+void add_edge (int a, int b, int cap) {
+	edge e1 = { a, b, cap, 0 };
+	edge e2 = { b, a, 0, 0 };
+	g[a].pb(e.size()); e.push_back (e1);
+	g[b].pb(e.size()); e.push_back (e2);
+}
+ 
+bool bfs() {
+	int qh=0, qt=0; q[qt++] = s;
+	memset (d, -1, n * sizeof d[0]); d[s] = 0;
+	while (qh < qt && d[t] == -1) {
+		int v = q[qh++];
+		for (int i=0; i<g[v].size(); ++i) {
+			int id = g[v][i], to = e[id].b;
+			if (d[to] == -1 && e[id].flow < e[id].cap) {
+				q[qt++] = to;
+				d[to] = d[v] + 1;
+	}}} return d[t] != -1;
+}
+ 
+int dfs (int v, int flow) {
+	if(!flow) return 0;
+	if(v == t) return flow;
+	for(; ptr[v]<(int)g[v].size(); ++ptr[v]) {
+		int id = g[v][ptr[v]], to = e[id].b;
+		if(d[to] != d[v] + 1)  continue;
+		int pushed = dfs(to, min (flow, e[id].cap - e[id].flow));
+		if(pushed) {
+			e[id].flow += pushed;
+			e[id^1].flow -= pushed;
+			return pushed;
+	}} return 0;
+}
+ 
+int dinic(){
+	int flow = 0;
+	while(bfs()){
+		memset(ptr, 0, n * sizeof ptr[0]);
+		while(int pushed = dfs (s, INF))
+			flow += pushed;
+	} return flow;
 }
 
-int Graph::sendFlow(int u, int flow, int t, int start[]){
-	if (u == t) return flow;
-	for (  ; start[u] < adj[u].size(); start[u]++){
-		Edge &e = adj[u][start[u]];
-		if (level[e.v] == level[u]+1 && e.flow < e.C){
-			int curr_flow = min(flow, e.C - e.flow);
-			int temp_flow = sendFlow(e.v, curr_flow, t, start);
-			if (temp_flow > 0){
-				e.flow += temp_flow;
-				adj[e.v][e.rev].flow -= temp_flow;
-				return temp_flow;
-	}}}
-	return 0;
-}
-
-int Graph::DinicMaxflow(int s, int t){
-	if (s == t) return -1;
-	int total = 0;
-	while (BFS(s, t) == true){
-		int *start = new int[V+1];
-		while (int flow = sendFlow(s, INF, t, start))
-			total += flow;
-	} return total;
-}
-
-vector< array<int,3> > lista_de_arestas; // {u,v,c}
-
-int calcula_fluxo(int s, int t){
-	Graph g(t+1); // quantos vertices. source=0 sink=n-1
-	for(auto a: lista_de_arestas)
-		g.addEdge(a[0],a[1],a[2]);
-	return g.DinicMaxflow(s,t);
+vector< array<int,4> > lista_de_arestas;
+ 
+int calcula_fluxo(int quantos_vertices, int k){
+	n = quantos_vertices; s = 0; t = n-1;
+    e.clear(); FOR(i,0,n) g[i].clear();
+    for(auto a: lista_de_arestas) if(a[3] <= k)
+        add_edge(a[0],a[1],a[2]);
+    return dinic();
 }
 ```
 
