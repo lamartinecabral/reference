@@ -1108,11 +1108,9 @@ int n, s, t, d[MAXN], ptr[MAXN], q[MAXN];
 vector<edge> e;
 vector<int> g[MAXN];
 
-void add_edge (int a, int b, int cap) {
-	edge e1 = { a, b, cap, 0 };
-	edge e2 = { b, a, 0, 0 };
-	g[a].pb(e.size()); e.push_back (e1);
-	g[b].pb(e.size()); e.push_back (e2);
+void add_edge (int u, int v, int cap) {
+	g[u].pb(e.size()); e.push_back({ u, v, cap, 0 });
+	g[v].pb(e.size()); e.push_back({ v, u, 0, 0 });
 }
  
 bool bfs() {
