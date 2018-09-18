@@ -24,6 +24,7 @@
     - [Ordered Multiset](#ordered-multiset)
     - [Bitset](#bitset)
     - [Inversed Vector](#inversed-vector)
+	- [128bit Integer](128bit-integer)
 - [**Grafos**](#grafos)
   - [Dijkstra](#dijkstra)
   - [Spanning Tree (MST)](#spanning-tree-mst)
@@ -814,11 +815,12 @@ struct ivi{ // inversed vector<int>
 };
 ```
 
-##### 128bit integer
+##### 128bit Integer
 
 ```c
 #define lll __int128_t
 ostream &operator<<(ostream &os, lll n){
+	if(n <= LINF) return os << (ll)n;
 	string s = ""; while(n){ s+='0'+n%10; n/=10; } reverse(all(s)); return os<<s; }
 ```
 
@@ -1392,12 +1394,12 @@ O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um 
 #define lll __int128_t
 
 inline ll modSum(ll a, ll b, ll c){
-	return a+b >= c ? (a+b)%c : a+b;
+	return (a+b)%c;
 }
 inline ll modMul(lll a, lll b, lll c){
 	return (ll)((a*b)%c);
 }
-inline ll modExp(lll a, lll b, lll c){
+inline ll modExp(ll a, ll b, ll c){
 	ll res = 1; while(b){
 		if(b & 1) res = modMul(res,a,c);
 		a = modMul(a,a,c); b >>= 1;
