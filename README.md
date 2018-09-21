@@ -24,7 +24,7 @@
     - [Ordered Multiset](#ordered-multiset)
     - [Bitset](#bitset)
     - [Inversed Vector](#inversed-vector)
-	- [128bit Integer](128bit-integer)
+	- [128bit Integer](#128bit-integer)
 - [**Grafos**](#grafos)
   - [Dijkstra](#dijkstra)
   - [Spanning Tree (MST)](#spanning-tree-mst)
