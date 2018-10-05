@@ -820,8 +820,8 @@ struct ivi{ // inversed vector<int>
 ```c
 #define lll __int128_t
 ostream &operator<<(ostream &os, lll n){
-	if(n <= LINF) return os << (ll)n;
-	string s = ""; while(n){ s+='0'+n%10; n/=10; } reverse(all(s)); return os<<s; }
+	if(n <= LINF) return os << (ll)n; string s = "";
+	while(n){ s+='0'+n%10; n/=10; } reverse(all(s)); return os<<s; }
 ```
 
 # Grafos
@@ -1800,6 +1800,7 @@ fi
 
 ```c
 //#include <bits/stdc++.h>/*
+#include <unordered_map>
 #include <functional> //greater
 #include <algorithm> //sort
 #include <iostream>
@@ -1844,6 +1845,8 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
+#define dbug(x) cerr<<">>>> "<<#x<<" = "<<x<<endl
+#define _ <<", "<<
 #define FOR(X,L,R) for(int X=L;X<R;X++)
 #define FI(I,X) for(auto I=(X).begin();I!=(X).end();I++)
 #define print(X) {cerr<<"{ ";FI(I,X)cerr<<*I<<' ';cerr<<"}"<<endl;}
