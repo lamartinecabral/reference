@@ -11,6 +11,7 @@
   - [Segment Tree](#segment-tree)
     - [Lazy Propagation](#lazy-propagation)
   - [Trie](#trie)
+	- [XOR trie](#xor-trie)
   - [Suffix Array & Longest Common Prefix Array](#suffix-array--longest-common-prefix-array)
   - [Wavelet Tree](#wavelet-tree)
   - [Treap](#treap)
@@ -361,6 +362,38 @@ bool busca(string &s){
 		else return false;
 	}
 	return trie[i].isleaf;
+}
+```
+
+##### XOR trie
+
+```c
+struct trienode {
+	int child[2], size;
+	trienode(){ mset(child,0); size = 0; }
+};
+vector<trienode> trie;
+void insere(int x){
+	int i = 0;
+	for(int k = 30; k >= 0; k--){
+		int c = x&(1<<k) ? 1 : 0;
+		if(trie[i].child[c] == 0) {
+			trie[i].child[c] = trie.size();
+			trie.push_back(trienode()); }
+		i = trie[i].child[c];
+		trie[i].size++;
+}}
+int busca(int x){
+	int ret = 0;
+	int i = 0;
+	for(int k = 30; k >= 0; k--){
+		int c = x&(1<<k) ? 1 : 0;
+		if(trie[trie[i].child[c]].size == 0)
+			c = 1-c; // minimizar(x ^ busca(x))
+		i = trie[i].child[c];
+		trie[i].size--; // search and remove
+		ret |= c<<k;
+	} return ret;
 }
 ```
 
