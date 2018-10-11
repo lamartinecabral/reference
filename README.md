@@ -373,28 +373,52 @@ struct trienode {
 	trienode(){ mset(child,0); size = 0; }
 };
 vector<trienode> trie;
+void init(){ trie.clear(); trie.pb(trienode()); }
 void insere(int x){
 	int i = 0;
 	for(int k = 30; k >= 0; k--){
 		int c = x&(1<<k) ? 1 : 0;
-		if(trie[i].child[c] == 0) {
+		if(trie[i].child[c] == 0){
 			trie[i].child[c] = trie.size();
-			trie.push_back(trienode()); }
+			trie.pb(trienode()); }
 		i = trie[i].child[c];
 		trie[i].size++;
 }}
-int busca(int x){
-	int ret = 0;
-	int i = 0;
+int maxi(int x){ // maximizar(x ^ maxi(x))
+	int i = 0, ret = 0;
 	for(int k = 30; k >= 0; k--){
 		int c = x&(1<<k) ? 1 : 0;
-		if(trie[trie[i].child[c]].size == 0)
-			c = 1-c; // minimizar(x ^ busca(x))
+		if(trie[trie[i].child[1-c]].size)
+			c = 1-c;
 		i = trie[i].child[c];
-		trie[i].size--; // search and remove
 		ret |= c<<k;
 	} return ret;
 }
+int mini(int x){ // minimizar(x ^ mini(x))
+	int i = 0, ret = 0;
+	for(int k = 30; k >= 0; k--){
+		int c = x&(1<<k) ? 1 : 0;
+		if(trie[trie[i].child[c]].size == 0)
+			c = 1-c;
+		i = trie[i].child[c];
+		ret |= c<<k;
+	} return ret;
+}
+bool busca(int x){
+	int i = 0;
+	for(int k = 30; k >= 0; k--){
+		int c = x&(1<<k) ? 1 : 0;
+		i = trie[i].child[c];
+		if(trie[i].size == 0) return false;
+	} return true;
+}
+void remove(int x){ if(!busca(x)) return;
+	int i = 0;
+	for(int k = 30; k >= 0; k--){
+		int c = x&(1<<k) ? 1 : 0;
+		i = trie[i].child[c];
+		trie[i].size--;
+}}
 ```
 
 ### Suffix Array & Longest Common Prefix Array
