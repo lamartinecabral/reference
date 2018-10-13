@@ -1019,28 +1019,20 @@ int qry(int v, int u){
 ### Topological Sort
 
 ```c
-int grau[SZ]; int n;
-vi g[SZ]; vi res;
+vi g[SZ], ts;
+bool vis[SZ];
 
-bool ord_top(){ // kahn's algorithm
-	priority_queue<int> pq; res.clear();
-	bool vis[SZ]; memset(vis,1,sizeof vis);
-	for(int i=0; i<n; i++) if(grau[i]==0){
-		vis[i] = 0;
-		pq.push(-i);
-	}
-	while(!pq.empty()){
-		int v = -pq.top(); pq.pop();
-		res.pb(v);
-		for(int i=0; i<g[v].size(); i++){
-			int u = g[v][i];
-			if(vis[u]){
-				grau[u]--;
-				if(grau[u] == 0){
-					vis[u] = 0;
-					pq.push(-u);
-	}}}}
-	return res.size() == n;
+void dfs(int u){
+	vis[u] = true;
+	for(auto & v : g[u])
+		if(!vis[v]) dfs(v);
+	ts.push_back(u);
+}
+
+void Topological(int n){
+	for(int i = 0; i < n; i++)
+		if(!vis[i]) dfs(i);
+	reverse(all(ts));
 }
 ```
 
