@@ -121,7 +121,6 @@ void kmppp(){
 		i++; j++;
 		b[i] = j;
 }}
-
 void kmp(){
 	int i=0, j=0;
 	while(i < s1.size()){
@@ -162,15 +161,15 @@ void uni(int i, int j){ pai[find(i)] = find(j); }
 
 ```c
 struct SparseTable{
-	int st[100010][17];
-	SparseTable(int* bg, int* en) {
-		int n = en-bg;
+	vector< array<int,17> > st; // st[1000000][17]
+	SparseTable(int* bg, int* en){
+		int n = en-bg; st.assign(n);
 		for(int i=0; i<n; i++) st[i][0] = bg[i];
 		for(int j = 1; (1<<j) <= n; j++)
 			for(int i=0; i+(1<<j) <= n; i++)
 				st[i][j] = min(st[i][j-1], st[i+(1<<(j-1))][j-1]);
 	}
-	int query(int l, int r) {
+	int query(int l, int r){
 		int k = log2(r-l+1);
 		return min(st[l][k], st[r+1-(1<<k)][k]);
 	}
@@ -1024,14 +1023,12 @@ bool vis[SZ];
 
 void dfs(int u){
 	vis[u] = true;
-	for(auto & v : g[u])
+	for(auto v: g[u])
 		if(!vis[v]) dfs(v);
 	ts.push_back(u);
 }
-
 void Topological(int n){
-	for(int i = 0; i < n; i++)
-		if(!vis[i]) dfs(i);
+	FOR(i,0,n) if(!vis[i]) dfs(i);
 	reverse(all(ts));
 }
 ```
@@ -1341,11 +1338,20 @@ void build(){
 ### Exponenciação Rápida
 
 ```c
-ll fexp(ll a, ll b, ll c){
-	ll res = 1;
-	while(b){
-		if(b&1) res = (res*a)%c;
-		a = (a*a)%c; b >>= 1;
+ll modSum(ll a, ll b, ll c){
+	return (a+b)%c;
+}
+ll modMul(ll a, ll b, ll c){
+	if( a<INF && b<INF ) return (a*b)%c;
+	ll res = 0; while(b){
+		if(b & 1) res = modSum(res,a,c);
+		a = modSum(a,a,c); b >>= 1;
+	} return res;
+}
+ll modExp(ll a, ll b, ll c){
+	ll res = 1; while(b){
+		if(b & 1) res = modMul(res,a,c);
+		a = modMul(a,a,c); b >>= 1;
 	} return res;
 }
 ```
@@ -1422,15 +1428,13 @@ vi powerx(vi &a, int b){
 O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario primeiro verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
-#define lll __int128_t
-
-inline ll modSum(ll a, ll b, ll c){
+ll modSum(ll a, ll b, ll c){
 	return (a+b)%c;
 }
-inline ll modMul(lll a, lll b, lll c){
+ll modMul(lll a, lll b, lll c){
 	return (ll)((a*b)%c);
 }
-inline ll modExp(ll a, ll b, ll c){
+ll modExp(ll a, ll b, ll c){
 	ll res = 1; while(b){
 		if(b & 1) res = modMul(res,a,c);
 		a = modMul(a,a,c); b >>= 1;
@@ -1444,7 +1448,7 @@ bool rabin(ll n) {
 	ll s = 0, t = n - 1;
 	while(~t & 1) t >>= 1, ++s;
 	for(auto x: p){
-		ll pt = modExp((ll)x, t, n);
+		ll pt = modExp(x, t, n);
 		if(pt == 1) continue;
 		bool ok = false;
 		for(int j = 0; j < s && !ok; j++) {
@@ -1629,6 +1633,7 @@ struct PT {
 double dot(PT p, PT q) { return p.x*q.x+p.y*q.y; }
 double dist2(PT p, PT q) { return dot(p-q,p-q); }
 double dist(PT p, PT q) { return sqrt(dist2(p,q)); }
+double mdist(PT p, PT q) { return fabs(p.x-q.x)+fabs(p.y-q.y); }
 double cross(PT p, PT q) { return p.x*q.y-p.y*q.x; }
 ostream &operator<<(ostream &os, const PT &p) {os<<"("<<p.x<<","<<p.y<<")";}
 // rotate a point CCW or CW around the origin
@@ -1658,6 +1663,10 @@ PT ProjectPointSegment(PT a, PT b, PT c) {
 	if (r < 0) return a;
 	if (r > 1) return b;
 	return a + (b-a)*r;
+}
+// checks if point is c is in segment through a and b
+bool IsInSegment(PT a, PT b, PT c) {
+	return (c-a) + (b-c) == b-a;
 }
 // compute distance from c to segment between a and b
 double DistancePointSegment(PT a, PT b, PT c) {
