@@ -383,21 +383,12 @@ void insere(int x){
 		i = trie[i].child[c];
 		trie[i].size++;
 }}
-int maxi(int x){ // maximizar(x ^ maxi(x))
+int qry(int x){
 	int i = 0, ret = 0;
 	for(int k = 30; k >= 0; k--){
 		int c = x&(1<<k) ? 1 : 0;
-		if(trie[trie[i].child[1-c]].size)
-			c = 1-c;
-		i = trie[i].child[c];
-		ret |= c<<k;
-	} return ret;
-}
-int mini(int x){ // minimizar(x ^ mini(x))
-	int i = 0, ret = 0;
-	for(int k = 30; k >= 0; k--){
-		int c = x&(1<<k) ? 1 : 0;
-		if(trie[trie[i].child[c]].size == 0)
+		if(trie[trie[i].child[1-c]].size) // maximizar (qry(x)^x)
+		//if(trie[trie[i].child[c]].size == 0) // minimizar (qry(x)^x)
 			c = 1-c;
 		i = trie[i].child[c];
 		ret |= c<<k;
@@ -786,8 +777,8 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 const int N = 1e6+10, LOGN = 20;
 struct ordered_multiset{
 	
-	int bit[N], contador;
-	ordered_multiset(){ memset(bit,0,sizeof bit); contador = 0; }
+	vi bit; int contador;
+	ordered_multiset(){ bit.assign(N,0); contador = 0; }
 	
 	int size(){
 		return contador;
@@ -889,8 +880,7 @@ vector<pii> g[SZ];
 int d[SZ];
 
 void dijkstra(int ori){
-	memset(d,63,sizeof d);
-	d[ori] = 0;
+	mset(d,INF); d[ori] = 0;
 
 	typedef array<int,2> vet;
 	priority_queue< vet, vector<vet>, greater<vet> > pq;
