@@ -1585,10 +1585,11 @@ Fórmulas para um triângulo com lados a,b,c
 ##### Pontos e Linhas
 
 ```c
+template<class T> bool inOrder(T& a, T& b, T& c){ return a<=b+EPS && b<=c+EPS; }
 struct point{
 	double x,y;
 	point(){}
-	point(double a, double b) x(a), y(b) {}
+	point(double a, double b): x(a), y(b) {}
 	point operator+(const point &a) const { return point(x+a.x, y+a.y); }
 	point operator-(const point &a) const { return point(x-a.x, y-a.y); }
 	bool operator == (point p) const {
@@ -1596,11 +1597,18 @@ struct point{
 	point rotate(double a){ //graus
 		a *= PI/180.0; return point( cos(a)*x-sin(a)*y, sin(a)*x+cos(a)*y ); }
 	bool isInSegment(point a, point b){
-		return (*this-a) + (b-*this) == b-a; }
+		return (
+			(inOrder(a.x,x,b.x) || inOrder(b.x,x,a.x)) &&
+			(inOrder(a.y,y,b.y) || inOrder(b.y,y,a.y))
+		) && fabs(
+			(a.x*b.y + b.x*y + x*a.y) -
+			(a.y*b.x + b.y*x + y*a.x)
+		) < EPS;
+	}
 };
 struct line{
 	double a,b,c;
-	line(double x, double y, double z){ a=x; b=y; c=z; }
+	line(double x, double y, double z): a(x), b(y), c(z) {}
 	line(point A, point B){ a = A.y - B.y; b = B.x - A.x; c = A.x*B.y - A.y*B.x; }
 	point somePoint(double k){
 		return fabs(b)>EPS ? point(k, -(a*k + c)/b ) : point( -(b*k + c)/a ,k);
@@ -1674,10 +1682,6 @@ PT ProjectPointSegment(PT a, PT b, PT c) {
 	if (r < 0) return a;
 	if (r > 1) return b;
 	return a + (b-a)*r;
-}
-// checks if point is c is in segment through a and b
-bool IsInSegment(PT a, PT b, PT c) {
-	return (c-a) + (b-c) == b-a;
 }
 // compute distance from c to segment between a and b
 double DistancePointSegment(PT a, PT b, PT c) {
