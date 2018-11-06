@@ -774,22 +774,24 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 ##### Ordered Multiset with BIT
 
 ```c
-const int N = 1e6+10, LOGN = 20;
 struct ordered_multiset{
 	
-	vi bit; int contador;
-	ordered_multiset(){ bit.assign(N,0); contador = 0; }
+	vi bit; int contador, N, LOGN, fix;
+	ordered_multiset(int mini, int maxi){
+		N = maxi - mini + 2;
+		fix = 1 - mini;
+		bit.assign(N,0); contador = 0; LOGN = log2(N)+1; }
 	
 	int size(){
 		return contador;
 	}
-	void insert(int x){ // must be inside [1,N-1]
+	void insert(int x){ x += fix; // must be inside [1,N-1]
 		for(int i=x; i<N; i += i&-i) bit[i]++; contador++;
 	}
-	void erase(int x){ // set must contain x
+	void erase(int x){ x += fix; // set must contain x
 		for(int i=x; i<N; i += i&-i) bit[i]--; contador--;
 	}
-	int lte(int x){ // how many less than or equal
+	int lte(int x){ x += fix; // how many less than or equal
 		int sum = 0;
 		for(int i=x; i; i -= i&-i) sum += bit[i];
 		return sum;
@@ -800,7 +802,7 @@ struct ordered_multiset{
 			if(pos + (1 << i) < N && sum + bit[pos + (1 << i)] < k){
 				sum += bit[pos + (1 << i)];
 				pos += (1 << i); }
-		return pos + 1;
+		return pos + 1 - fix;
 	}
 };
 ```
@@ -837,7 +839,7 @@ ordered_set::iterator find(ordered_set &s, int x){ if(ids[x].size()==0) return s
 ##### Bitset
 
 ```c
-int bs[1000000000/32];
+const int N = 1e8; int bs[N/32];
 bool bget(int i){
 	return bs[i>>5]&(1<<(i&31));
 }
@@ -852,7 +854,7 @@ void breset(int i){
 ##### Inversed Vector
 
 ```c
-struct ivi{ // inversed vector<int>
+struct ivi{ // inversed_vector<int>
 	vi a;
 	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
 	int& operator[](int i){ return a[a.size()-1-i]; }
@@ -1007,10 +1009,15 @@ int qry(int v, int u){
 
 ### Topological Sort
 
+Se a ordenação topológica for única
+então ela forma um caminho hamiltoniano,
+senão um caminho hamiltoniano não existe.
+
+##### DFS
 ```c
 vi g[SZ], ts;
-bool vis[SZ];
 
+bool vis[SZ];
 void dfs(int u){
 	vis[u] = true;
 	for(auto v: g[u])
@@ -1019,6 +1026,25 @@ void dfs(int u){
 }
 void Topological(int n){
 	FOR(i,0,n) if(!vis[i]) dfs(i);
+	reverse(all(ts));
+}
+```
+
+##### BFS
+```
+vi g[SZ], ts;
+
+vi h[SZ]; int grau[SZ];
+void Topological(int n){
+	FOR(v,0,n) for(auto u: g[v]){
+		h[u].pb(v); grau[v]++;
+	}
+	priority_queue<int> pq;
+	FOR(v,0,n) if(grau[v] == 0) pq.push(v);
+	while(pq.size()){
+		int v = pq.top(); pq.pop(); ts.pb(v);
+		for(auto u: h[v]) if(--grau[u] == 0) pq.push(u);
+	}
 	reverse(all(ts));
 }
 ```
@@ -1222,44 +1248,38 @@ void knapsack(){
 Apenas o tamanho da lista
 
 ```c
-vi lis;
-int n;
-scanf("%d", &n);
-int v[n];
-for(int i=0; i<n; i++){
-	scanf("%d", &v[i]);
-	int j = lower_bound(all(lis), v[i]) - lis.begin();
-	if(j==lis.size()) lis.pb(v[i]);
-	else lis[j] = v[i];
-}
-printf("%d\n", (int)lis.size());
+vi lis; int v[SZ];
+void LIS(int n){
+	lis.clear();
+	FOR(i,0,n){
+		int j = lowerb(lis, v[i]); // increasing
+		//int j = upperb(lis, v[i]); // non-decreasing
+		if(j == lis.size()) lis.pb(v[i]);
+		else lis[j] = v[i];
+}}
 ```
 
 Imprimir a LIS
 
 ```c
-vector<pii> lis;
-int n;
-scanf("%d", &n);
-int v[n],ant[n];
-for(int i=0; i<n; i++){
-	scanf("%d", &v[i]);
-	int j = lower_bound( all(lis), pii(v[i],-i) ) - lis.begin();
-	if(j==lis.size()) lis.pb({v[i],-i});
-	else lis[j] = {v[i],-i};
-	if(j==0) ant[i] = -1;
-	else ant[i] = -lis[j-1].se;
-}
-deque<int> res;
-int index = -lis.back().se;
-do{
-	res.push_front(v[index]);
-	index = ant[index];
-} while(index != -1);
+vector<pii> aux; vi lis;
+int v[SZ],ant[SZ];
 
-printf("Tamanho da LIS: %d\n", (int)res.size());
-printf("LIS: ");
-for(auto i: res) printf("%d ", i); printf("\n");
+void LIS(int n){
+	//int h = -1; // increasing
+	int h = 1; // non-decreasing
+	FOR(i,0,n){
+		int j = lowerb( aux, pii(v[i],i*h) );
+		if(j == aux.size()) aux.pb({v[i],i*h});
+		else aux[j] = {v[i],i*h};
+		if(j==0) ant[i] = -1;
+		else ant[i] = aux[j-1].se*h;
+	}
+	lis.clear();
+	for(int i = aux.back().se*h; ~i; i = ant[i])
+		lis.pb(v[i]);
+	reverse(all(lis));
+}
 ```
 
 ### Digit DP
@@ -1316,13 +1336,21 @@ void extEucl(int a, int b){
 
 ```c
 const int N = 1e6;
-bool crivo[N]; vi primes;
+int32_t fator[N]; vi primes;
 void build(){
-	for(int i=2; i<N; i++){
-		if(crivo[i]==0){ primes.pb(i);
-			for(int j=i*2; j<N; j+=i){
-				crivo[j]=1;
+	for(ll i=2; i<N; i++){
+		if(!fator[i]){
+			fator[i] = i; primes.pb(i);
+			for(ll j=i*i; j<N; j+=i){
+				if(!fator[j]) fator[j] = i;
 }}}}
+map<int,int> fatorar(int n){
+	map<int,int> f;
+	while(n > 1){
+		f[ fator[n] ]++;
+		n /= fator[n];
+	} return f;
+}
 ```
 
 ### Exponenciação Rápida
@@ -1557,25 +1585,18 @@ Fórmulas para um triângulo com lados a,b,c
 ##### Pontos e Linhas
 
 ```c
-template<class T> bool inOrder(T& a, T& b, T& c){ return a<=b+EPS && b<=c+EPS; }
 struct point{
 	double x,y;
-	point(){ x=y=0.0; }
-	point(double a, double b){ x=a; y=b; }
-	point operator+(point a) const { return point(x+a.x, y+a.y); }
-	point operator-(point a) const { return point(x-a.x, y-a.y); }
+	point(){}
+	point(double a, double b) x(a), y(b) {}
+	point operator+(const point &a) const { return point(x+a.x, y+a.y); }
+	point operator-(const point &a) const { return point(x-a.x, y-a.y); }
+	bool operator == (point p) const {
+		return fabs(x-p.x) < EPS && fabs(y-p.y) < EPS; }
 	point rotate(double a){ //graus
-		a *= PI/180.0; return point( cos(a)*x-sin(a)*y, sin(a)*x+cos(a)*y );
-	}
+		a *= PI/180.0; return point( cos(a)*x-sin(a)*y, sin(a)*x+cos(a)*y ); }
 	bool isInSegment(point a, point b){
-		return (
-			(inOrder(a.x,x,b.x) || inOrder(b.x,x,a.x)) &&
-			(inOrder(a.y,y,b.y) || inOrder(b.y,y,a.y))
-		) && fabs(
-			(a.x*b.y + b.x*y + x*a.y) -
-			(a.y*b.x + b.y*x + y*a.x)
-		) < EPS;
-	}
+		return (*this-a) + (b-*this) == b-a; }
 };
 struct line{
 	double a,b,c;
