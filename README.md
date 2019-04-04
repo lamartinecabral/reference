@@ -1921,7 +1921,7 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
 #define FOR(X,L,R) for(int X=L;X<R;X++)
-#define print(X) {cerr<<"{ ";for(auto A:X)cerr<<A<<' ';cerr<<"}"<<endl;}
+#define print(X) {for(auto A:X)cout<<A<<' ';cout<<endl;}
 #define mset(V,X) memset(V,X,sizeof(V))
 #define all(X) (X).begin(),(X).end()
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
