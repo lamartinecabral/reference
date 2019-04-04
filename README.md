@@ -68,10 +68,10 @@
 ll bin(ll L, ll R){
 	while(L<=R){
 		ll m = (L+R)/2;
-		test(m) ? R = m-1 : L = m+1;
+		test(m) ? L = m+1 : R = m-1;
 	}
-	return L; // primeiro true
-	return R; // ultimo false
+	return L; // primeiro false
+	return R; // ultimo true
 }
 ```
 
@@ -229,29 +229,29 @@ int comp(int a, int b) {
 struct SegmentTree {
 	vector<int> st;
 	int size;
-#define left(p) (p << 1)
-#define right(p) ((p << 1) + 1)
+#define esq(p) (p << 1)
+#define dir(p) ((p << 1) + 1)
 	void build(int p, int l, int r, int* A) {
 		if (l == r) { st[p] = A[l]; return; }
 		int m = (l + r) / 2;
-		build(left(p), l, m, A);
-		build(right(p), m+1, r, A);
-		st[p] = comp(st[left(p)], st[right(p)]);
+		build(esq(p), l, m, A);
+		build(dir(p), m+1, r, A);
+		st[p] = comp(st[esq(p)], st[dir(p)]);
 	}
 	void update(int p, int l, int r, int i, int k) {
 		if (i > r || i < l) return;
 		if (l == r){ st[p] += k; return; }
 		int m = (l + r) / 2;
-		update(left(p), l, m, i, k);
-		update(right(p), m+1, r, i, k);
-		st[p] = comp(st[left(p)], st[right(p)]);
+		update(esq(p), l, m, i, k);
+		update(dir(p), m+1, r, i, k);
+		st[p] = comp(st[esq(p)], st[dir(p)]);
 	}
 	int query(int p, int l, int r, int a, int b) {
 		if (a > r || b < l) return neutral;
 		if (l >= a && r <= b) return st[p];
 		int m = (l + r) / 2;
-		int p1 = query(left(p), l, m, a, b);
-		int p2 = query(right(p), m+1, r, a, b);
+		int p1 = query(esq(p), l, m, a, b);
+		int p2 = query(dir(p), m+1, r, a, b);
 		return comp(p1, p2);
 	}
 	
@@ -276,21 +276,21 @@ int comp(int a, int b) {
 struct SegmentTree {
 	vector<int> st, lazy;
 	int size;
-#define left(p) (p << 1)
-#define right(p) ((p << 1) + 1)
+#define esq(p) (p << 1)
+#define dir(p) ((p << 1) + 1)
 	void build(int p, int l, int r, int* A) {
 		if (l == r) { st[p] = A[l]; return; }
 		int m = (l + r) / 2;
-		build(left(p), l, m, A);
-		build(right(p), m+1, r, A);
-		st[p] = comp(st[left(p)], st[right(p)]);
+		build(esq(p), l, m, A);
+		build(dir(p), m+1, r, A);
+		st[p] = comp(st[esq(p)], st[dir(p)]);
 	}
 	void push(int p, int l, int r) {
 		st[p] += (r - l + 1)*lazy[p];	//Caso RSQ
 		//st[p] += lazy[p]; 		    //Caso RMQ
 		if (l != r) {
-			lazy[right(p)] += lazy[p];
-			lazy[left(p)] += lazy[p];
+			lazy[dir(p)] += lazy[p];
+			lazy[esq(p)] += lazy[p];
 		}
 		lazy[p] = 0;
 	}
@@ -301,17 +301,17 @@ struct SegmentTree {
 			lazy[p] = k; push(p, l, r); return;
 		}
 		int m = (l + r) / 2;
-		update(left(p), l, m, a, b, k);
-		update(right(p), m+1, r, a, b, k);
-		st[p] = comp(st[left(p)], st[right(p)]);
+		update(esq(p), l, m, a, b, k);
+		update(dir(p), m+1, r, a, b, k);
+		st[p] = comp(st[esq(p)], st[dir(p)]);
 	}
 	int query(int p, int l, int r, int a, int b) {
 		push(p, l, r);
 		if (a > r || b < l) return neutral;
 		if (l >= a && r <= b) return st[p];
 		int m = (l + r) / 2;
-		int p1 = query(left(p), l, m, a, b);
-		int p2 = query(right(p), m+1, r, a, b);
+		int p1 = query(esq(p), l, m, a, b);
+		int p2 = query(dir(p), m+1, r, a, b);
 		return comp(p1, p2);
 	}
 
@@ -1215,10 +1215,10 @@ vector< array<int,3> > lista_de_arestas;
  
 int calcula_fluxo(int quantos_vertices){
 	n = quantos_vertices; s = 0; t = n-1;
-    e.clear(); FOR(i,0,n) g[i].clear();
-    for(auto a: lista_de_arestas)
-        add_edge(a[0],a[1],a[2]);
-    return dinic();
+	e.clear(); FOR(i,0,n) g[i].clear();
+	for(auto a: lista_de_arestas)
+		add_edge(a[0],a[1],a[2]);
+	return dinic();
 }
 ```
 
@@ -1234,10 +1234,10 @@ int pd[1010][1010];
 
 void knapsack(){
 	mset(pd,0);
-	FOR(j,1,c+1) if(volume[0] <= j) pd[j][0] = valor[0];
+	FOR(j,1,c+1) if(volume[0] <= j) pd[0][j] = valor[0];
 	FOR(i,1,n) FOR(j,1,c+1){
-		pd[j][i] = max(pd[j-1][i], pd[j][i-1]);
-		if(volume[i] <= j) pd[j][i] = max(pd[j][i], valor[i]+pd[j-volume[i]][i-1]);
+		pd[i][j] = max(pd[i][j-1], pd[i-1][j]);
+		if(volume[i] <= j) pd[i][j] = max(pd[i][j], valor[i]+pd[i-1][j-volume[i]]);
 	}
 }
 ```
@@ -1309,8 +1309,8 @@ int query(int k){
 
 ```c
 // __gcd(a,b);
-int mdc(int a, int b) { return b == 0 ? a : mdc(b, a%b); }
-int mmc(int a, int b) { return a*b/mdc(a, b); }
+int gcd(int a, int b) { return b == 0 ? a : gcd(b, a%b); }
+int lcm(int a, int b) { return a*b/gcd(a, b); }
 ```
 
 ### Euclides Extendido
@@ -1318,7 +1318,7 @@ int mmc(int a, int b) { return a*b/mdc(a, b); }
 ```c
 int x,y,d;
 // x*a + y*b = d
-// d = mdc(a,b)
+// d = gcd(a,b)
 // x*a = d mod b
 
 void extEucl(int a, int b){
@@ -1336,14 +1336,13 @@ void extEucl(int a, int b){
 
 ```c
 const int N = 1e6;
-int32_t fator[N]; vi primes;
+int fator[N]; vi primes;
 void build(){
-	for(ll i=2; i<N; i++){
-		if(!fator[i]){
-			fator[i] = i; primes.pb(i);
-			for(ll j=i*i; j<N; j+=i){
-				if(!fator[j]) fator[j] = i;
-}}}}
+	for(ll i=2; i<N; i++) if(!fator[i]){
+		fator[i] = i; primes.pb(i);
+		for(ll j=i*i; j<N; j+=i) if(!fator[j])
+			fator[j] = i;
+}}
 map<int,int> fatorar(int n){
 	map<int,int> f;
 	while(n > 1){
@@ -1449,8 +1448,12 @@ O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um 
 ll modSum(ll a, ll b, ll c){
 	return (a+b)%c;
 }
-ll modMul(lll a, lll b, lll c){
-	return (ll)((a*b)%c);
+ll modMul(ll a, ll b, ll c){
+	if( a<INF && b<INF ) return (a*b)%c;
+	ll res = 0; while(b){
+		if(b & 1) res = modSum(res,a,c);
+		a = modSum(a,a,c); b >>= 1;
+	} return res;
 }
 ll modExp(ll a, ll b, ll c){
 	ll res = 1; while(b){
@@ -1899,7 +1902,6 @@ fi
 //*/
 
 #define int long long
-#define uns unsigned
 #define ll long long
 #define vi vector<int>
 #define pii pair<int,int>
@@ -1918,11 +1920,8 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
-#define dbug(x) cerr<<">>>> "<<#x<<" = "<<x<<endl
-#define _ <<", "<<
 #define FOR(X,L,R) for(int X=L;X<R;X++)
-#define FI(I,X) for(auto I=(X).begin();I!=(X).end();I++)
-#define print(X) {cerr<<"{ ";FI(I,X)cerr<<*I<<' ';cerr<<"}"<<endl;}
+#define print(X) {cerr<<"{ ";for(auto A:X)cerr<<A<<' ';cerr<<"}"<<endl;}
 #define mset(V,X) memset(V,X,sizeof(V))
 #define all(X) (X).begin(),(X).end()
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
