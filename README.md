@@ -27,7 +27,9 @@
     - [Inversed Vector](#inversed-vector)
 	- [128bit Integer](#128bit-integer)
 - [**Grafos**](#grafos)
+  - [Busca em largura (BFS) e profundidade (DFS)](busca-em-largura-bfs-e-profundidade-dfs)
   - [Dijkstra](#dijkstra)
+  - [Floyd Warshall](#floyd-warshall)
   - [Spanning Tree (MST)](#spanning-tree-mst)
   - [Lowest Common Ancestor (LCA)](#lowest-common-ancestor-lca)
 	- [LCA with Sparse Table](#lca-with-sparse-table)
@@ -65,6 +67,8 @@
 ### Binary Search
 
 ```c
+bool test(int m){}
+
 ll bin(ll L, ll R){
 	while(L<=R){
 		ll m = (L+R)/2;
@@ -869,11 +873,40 @@ struct ivi{ // inversed_vector<int>
 ```c
 #define lll __int128_t
 ostream &operator<<(ostream &os, lll n){
-	if(n <= LINF) return os << (ll)n; string s = "";
-	while(n){ s+='0'+n%10; n/=10; } reverse(all(s)); return os<<s; }
+	int s = n<0 ? -1 : 1; n*=s;
+	ll x = 1e13; vector<ll> v;
+	while(n){ v.push_back((ll)(n%x)); n/=x; }
+	for(int i=v.size()-1; i>=0; --i){ os<<s*v[i]; s*=s; } }
 ```
 
 # Grafos
+
+### Busca em largura (BFS) e profundidade (DFS)
+
+```c
+vector<int> g[SZ];
+bool vis[SZ];
+
+void bfs(int start){
+	queue<int> q;
+	q.push(start);
+	vis[start] = true;
+	while(!q.empty()){
+		int v = q.front();
+		q.pop();
+		for(auto u: g[v]){
+			if(vis[u] == 0){
+				vis[u] = 1;
+				q.push(u);
+}}}}
+
+void dfs(int v){
+	vis[v] = 1;
+	for(auto u: g[v]){
+		if(vis[u] == 0){
+			dfs(u);
+}}}
+```
 
 ### Dijkstra
 
@@ -881,12 +914,12 @@ ostream &operator<<(ostream &os, lll n){
 vector<pii> g[SZ];
 int d[SZ];
 
-void dijkstra(int ori){
-	mset(d,INF); d[ori] = 0;
+void dijkstra(int start){
+	mset(d,INF); d[start] = 0;
 
 	typedef array<int,2> vet;
 	priority_queue< vet, vector<vet>, greater<vet> > pq;
-	pq.push( {0,ori} );
+	pq.push( {0,start} );
 	while(!pq.empty()){
 		int dv = pq.top()[0];
 		int v = pq.top()[1];
@@ -894,13 +927,22 @@ void dijkstra(int ori){
 		if(dv > d[v]) continue;
 		for(auto x: g[v]){
 			int u = x.fi;
-			int p = x.se;
-			if(dv + p < d[u]){
-				d[u] = dv + p;
+			int w = x.se;
+			if(d[u] > dv + w){
+				d[u] = dv + w;
 				pq.push( {d[u], u} );
-			}
-		}
-	}
+}}}}
+```
+
+### Floyd Warshall
+
+```c
+// initialize with INF
+int g[SZ][SZ];
+
+void floyd(){
+	FOR(k,0,n) FOR(i,0,n) FOR(j,0,n)
+		g[i][j] = min(g[i][j], g[i][k]+g[k][j] );
 }
 ```
 
@@ -1094,8 +1136,8 @@ TSP reduzido pra calcular o custo da melhor permutação.
 
 ```c
 int N;
-double h[MAXN][MAXN];
-double tsp[1<<MAXN][MAXN];
+double h[N][N];
+double tsp[1<<N][N];
 // tsp[S][i] = o custo de visitar todos os
 // nós de S onde i foi o ultimo nó visitado
 
@@ -1355,20 +1397,12 @@ map<int,int> fatorar(int n){
 ### Exponenciação Rápida
 
 ```c
-ll modSum(ll a, ll b, ll c){
-	return (a+b)%c;
-}
-ll modMul(ll a, ll b, ll c){
-	if( a<INF && b<INF ) return (a*b)%c;
-	ll res = 0; while(b){
-		if(b & 1) res = modSum(res,a,c);
-		a = modSum(a,a,c); b >>= 1;
-	} return res;
-}
-ll modExp(ll a, ll b, ll c){
+const ll mod = 1e9+7;
+
+ll fexp(ll a, ll b){
 	ll res = 1; while(b){
-		if(b & 1) res = modMul(res,a,c);
-		a = modMul(a,a,c); b >>= 1;
+		if(b & 1) res = (res*a)%mod;
+		a = (a*a)%mod; b >>= 1;
 	} return res;
 }
 ```
@@ -1389,11 +1423,11 @@ map<int,int> fatorar(int n){
 ### Totiente de Euler
 
 ```c
-var phi(var n){
+int phi(int n){
 	auto f = fatorar(n);
-	var res = 1;
+	int res = 1;
 	for(auto x: f){
-		var fator = x.fi; var exp = x.se;
+		int fator = x.fi; int exp = x.se;
 		res *= fexp(fator,exp-1);
 		res *= fator-1;
 	}
@@ -1404,12 +1438,9 @@ var phi(var n){
 ### Inverso Multiplicativo
 
 ```c
-/// TIP /// inv(x) = x^(m-2) mod m ??? if m is prime and x<m
-var inv(var x, var mod){
-	if(__gcd(x,mod)!=1) return -1
-	var _phi = phi(mod) - 1;
-	return fexp(x,_phi,mod);
-}
+/// (a/x) % m = (a * exp(x,-1)) % m
+/// exp(x,-1) % m = exp(x, phi(m)-1 ) % m	if gcd(x,m) == 1
+/// exp(x,-1) % m = exp(x, m-2) % m		if m is prime
 ```
 
 ### Matrizes
