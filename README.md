@@ -27,7 +27,7 @@
     - [Inversed Vector](#inversed-vector)
 	- [128bit Integer](#128bit-integer)
 - [**Grafos**](#grafos)
-  - [Busca em largura (BFS) e profundidade (DFS)](busca-em-largura-bfs-e-profundidade-dfs)
+  - [Busca em largura (BFS) e profundidade (DFS)](#busca-em-largura-bfs-e-profundidade-dfs)
   - [Dijkstra](#dijkstra)
   - [Floyd Warshall](#floyd-warshall)
   - [Spanning Tree (MST)](#spanning-tree-mst)
