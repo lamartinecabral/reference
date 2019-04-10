@@ -1358,15 +1358,10 @@ int lcm(int a, int b) { return a*b/gcd(a, b); }
 ### Euclides Extendido
 
 ```c
+// calculate d = gcd(a,b) and solve ax + by = d
 int x,y,d;
-// x*a + y*b = d
-// d = gcd(a,b)
-// x*a = d mod b
-
 void extEucl(int a, int b){
-	if(b==0){
-		x=1; y=0; d=a; return;
-	}
+	if(b==0){ x=1; y=0; d=a; return; }
 	extEucl(b, a%b);
 	int x1 = y;
 	int y1 = x - (a/b)*y;
@@ -1378,20 +1373,14 @@ void extEucl(int a, int b){
 
 ```c
 const int N = 1e6;
-int fator[N]; vi primes;
+bool fator[N]; vi primes;
 void build(){
-	for(ll i=2; i<N; i++) if(!fator[i]){
-		fator[i] = i; primes.pb(i);
-		for(ll j=i*i; j<N; j+=i) if(!fator[j])
-			fator[j] = i;
+	for(ll i=2; i<N; i++){
+		if(crivo[i]) continue;
+		primes.pb(i);
+		for(ll j=i*i; j<N; j+=i)
+			fator[j] = 1;
 }}
-map<int,int> fatorar(int n){
-	map<int,int> f;
-	while(n > 1){
-		f[ fator[n] ]++;
-		n /= fator[n];
-	} return f;
-}
 ```
 
 ### Exponenciação Rápida
@@ -1417,6 +1406,21 @@ map<int,int> fatorar(int n){
 			f[i]++; n/=i; }
 	if(n > 1) f[n]++;
 	return f;
+}
+
+//generate all divisors from factors
+vector<int> divs;
+int aux = 1;
+map<int,int> f;
+map<int,int>::iterator it;
+void bt(){
+	if(it == f.end()){ divs.push_back(aux); --it; return; }
+	int ant = aux;
+	++it; bt();
+	for(int i=0; i<it->second; ++i){
+		aux *= it->first;
+		++it; bt();
+	} aux = ant; if(it != f.begin()) --it;
 }
 ```
 
