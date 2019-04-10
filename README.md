@@ -225,48 +225,56 @@ using namespace __gnu_pbds;
 ### Segment Tree
 
 ```c
-const int neutral = 0; //comp(x, neutral) = x
-int comp(int a, int b) {
-	return a + b;
+typedef int var;
+
+int k;
+var st[SZ*4];
+var v[SZ];
+
+var neutro = 0;
+var combine(var a, var b){
+	return a+b;
 }
 
-struct SegmentTree {
-	vector<int> st;
-	int size;
-#define esq(p) (p << 1)
-#define dir(p) ((p << 1) + 1)
-	void build(int p, int l, int r, int* A) {
-		if (l == r) { st[p] = A[l]; return; }
-		int m = (l + r) / 2;
-		build(esq(p), l, m, A);
-		build(dir(p), m+1, r, A);
-		st[p] = comp(st[esq(p)], st[dir(p)]);
-	}
-	void update(int p, int l, int r, int i, int k) {
-		if (i > r || i < l) return;
-		if (l == r){ st[p] += k; return; }
-		int m = (l + r) / 2;
-		update(esq(p), l, m, i, k);
-		update(dir(p), m+1, r, i, k);
-		st[p] = comp(st[esq(p)], st[dir(p)]);
-	}
-	int query(int p, int l, int r, int a, int b) {
-		if (a > r || b < l) return neutral;
-		if (l >= a && r <= b) return st[p];
-		int m = (l + r) / 2;
-		int p1 = query(esq(p), l, m, a, b);
-		int p2 = query(dir(p), m+1, r, a, b);
-		return comp(p1, p2);
-	}
+void build(int n){
+	k = n;
+	while(k != (k&-k) )
+		k += k&-k;
 	
-	SegmentTree(int* bg, int* en) {
-		size = (int)(en - bg);
-		st.assign(4 * size, neutral);
-		build(1, 0, size - 1, bg);
-	}
-	int query(int a, int b) { return query(1, 0, size - 1, a, b); }
-	void update(int i, int k) { update(1, 0, size - 1, i, k); }
-};
+	for(int i=0; i<k+k; i++)
+		st[i] = neutro;
+	
+	for(int i=0; i<n; i++)
+		st[k+i] = v[i];
+	
+	for(int i=k-1; i; i--)
+		st[i] = combine( st[2*i], st[2*i+1] );
+}
+
+int L,R;
+var qry(int i, int l, int r){
+	if(l >= L && r <= R) return st[i];
+	if(r < L || l > R) return neutro;
+	int mid = (l+r)/2;
+	return combine( qry(i*2,l,mid) , qry(i*2+1,mid+1,r) );
+}
+
+var query(int l, int r){
+	L = l, R = r;
+	return qry(1,0,k-1);
+}
+
+void update(int i, var x){
+	v[i] = x;
+	i += k;
+	st[i] = x;
+	for(i /= 2; i; i /= 2)
+		st[i] = combine( st[i*2], st[i*2+1] );
+}
+
+// 0-indexed
+// left and right included on interval
+// How to use: build(size); query(left,right); update(index,value);
 ```
 
 ##### Lazy Propagation
