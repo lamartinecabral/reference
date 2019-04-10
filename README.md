@@ -895,15 +895,15 @@ void bfs(int start){
 		int v = q.front();
 		q.pop();
 		for(auto u: g[v]){
-			if(vis[u] == 0){
-				vis[u] = 1;
+			if(vis[u] == false){
+				vis[u] = true;
 				q.push(u);
 }}}}
 
 void dfs(int v){
-	vis[v] = 1;
+	vis[v] = true;
 	for(auto u: g[v]){
-		if(vis[u] == 0){
+		if(vis[u] == false){
 			dfs(u);
 }}}
 ```
