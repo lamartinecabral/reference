@@ -1539,6 +1539,7 @@ ll rho(ll n){
 ### Fast Fourier Transform (FFT)
 
 ```c
+const double PI = acos(-1);
 //typedef complex<double> base;/*
 struct base {
 	double x, y;
@@ -1556,7 +1557,7 @@ struct base {
 	base operator-(base a) const { return base(x-a.x, y-a.y); }
 	double real() { return x; }
 	double imag() { return y; }
-}; //*/
+};//*/
 ostream &operator<<(ostream &os, base &p){
 	return os<<"("<<round(p.real())<<","<<round(p.imag())<<")";}
 
@@ -1571,7 +1572,7 @@ void fft (vector<base> & a, bool invert) {
 	}
 
 	for(int len=2; len<=n; len<<=1) {
-		double ang = 2*M_PI/len * (invert ? -1 : 1);
+		double ang = 2*PI/len * (invert ? -1 : 1);
 		base wlen(cos(ang), sin(ang));
 		for(int i=0; i<n; i+=len) {
 			base w(1);
@@ -1606,7 +1607,7 @@ int main(){
 	B = {base(6),base(5),base(4),base(3)};
 	convolution(A, B, C);
 	for(int i=0; i<A.size()+B.size()-1; i++) {
-		printf(" %.0f", C[i].real());
+		printf(" %f", round(C[i].real()) );
 	} printf("\n");
 	
 	return 0;
