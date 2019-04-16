@@ -1963,6 +1963,8 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
+#define dbug(X) cerr<<#X<<" = "<<X<<endl;
+#define _ <<" _ "<<
 #define FOR(X,L,R) for(int X=L;X<R;X++)
 #define print(X) {for(auto A:X)cout<<A<<' ';cout<<endl;}
 #define mset(V,X) memset(V,X,sizeof(V))
