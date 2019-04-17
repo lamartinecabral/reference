@@ -882,9 +882,9 @@ struct ivi{ // inversed_vector<int>
 #define lll __int128_t
 ostream &operator<<(ostream &os, lll n){
 	int s = n<0 ? -1 : 1; n*=s;
-	ll x = 1e13; vector<ll> v;
-	while(n){ v.push_back((ll)(n%x)); n/=x; }
-	for(int i=v.size()-1; i>=0; --i){ os<<s*v[i]; s*=s; } }
+	ll x = 1e13; deque<ll> v;
+	while(n){ v.push_front((ll)(n%x)); n/=x; }
+	for(int i:v){ os<<s*i; s*=s; } return os; }
 ```
 
 # Grafos
