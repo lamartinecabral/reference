@@ -1380,15 +1380,51 @@ void extEucl(int a, int b){
 ### Crivo de Eratostenes
 
 ```c
+// prime check
 const int N = 1e6;
-bool fator[N]; vi primes;
-void build(){
-	for(ll i=2; i<N; i++){
-		if(crivo[i]) continue;
-		primes.pb(i);
-		for(ll j=i*i; j<N; j+=i)
-			fator[j] = 1;
-}}
+bool crivo[N]; vi primos;
+for(ll i=2; i<N; ++i){
+	if(crivo[i] == true) continue;
+	primos.push_back(i);
+	for(ll j=i*i; j<N; j+=i)
+		crivo[j] = true; }
+
+// divisor count
+int count[N];
+for(int i=1; i<N; ++i)
+	for(int j=i; j<N; j+=i)
+		++count[j];
+
+// sum of divisors
+int sumdiv[N];
+for(int i=1; i<N; ++i)
+	for(int j=i; j<N; j+=i)
+		sumdiv[j] += i;
+
+// euler's totient
+int phi[N];
+for(int i=1; i<N; ++i) phi[i] = i;
+for(int i=2; i<N; ++i)
+	if(phi[i] == i)
+		for(int j=i; j<N; j+=i)
+			totient[j] -= totient[j]/i;
+
+// biggest prime factor
+int factor[N];
+for(int i=2; i<N; ++i)
+	if(factor[i] == 0)
+		for(int j=i; j<N; j+=i)
+			factor[j] = i;
+
+// mobius function
+int mobius[N]; bool crivo[N];
+for(int i=2; i<N; ++i) mobius[i] = -1;
+for(int i=2; i<N; ++i)
+	if(crivo[i] == false)
+		for(int j=i; j<N; j+=i){
+			crivo[j] = true;
+			mobius[j] *= -1;
+			if(j%(i*i)==0) mobius[j] = 0; }
 ```
 
 ### Exponenciação Rápida
