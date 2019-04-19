@@ -40,7 +40,8 @@
   - [Bipartite Matching (Kuhn's)](#bipartite-matching-kuhns)
   - [Maximum Flow](#maximum-flow)
 - [**Programação Dinâmica**](#programação-dinâmica)
-  - [Knapsack (Mochila)](#knapsack-mochila)
+  - [Coin Change Problem](#coin-change-problem)
+  - [Knapsack 0-1 Problem](#knapsack-0-1-problem)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
   - [Digit DP](#digit-dp)
 - [**Matemática**](#matemática)
@@ -1274,24 +1275,32 @@ int calcula_fluxo(int quantos_vertices){
 
 # Programação Dinâmica
 
-### Knapsack (Mochila)
+### Coin Change Problem
 
 ```c
-int n,c;
-int valor[1010];
-int volume[1010];
-int pd[1010][1010];
-
-void knapsack(){
-	mset(pd,0);
-	FOR(j,1,c+1) if(volume[0] <= j) pd[0][j] = valor[0];
-	FOR(i,1,n) FOR(j,1,c+1){
-		pd[i][j] = max(pd[i][j-1], pd[i-1][j]);
-		if(volume[i] <= j) pd[i][j] = max(pd[i][j], valor[i]+pd[i-1][j-volume[i]]);
-	}
-}
+vector<int> moeda;
+int troco[maxt];
+void build(){
+	troco[0] = 0;
+	for(int i=1; i<N; ++i){
+		troco[i] = 1e9;
+		for(int x: moeda)
+			if(x<=i) troco[i] = min(troco[i], troco[i-x]+1 );
+}}
 ```
 
+### Knapsack 0-1 Problem
+
+```c
+int valor[maxn], peso[maxn];
+int pd[maxc];
+int mochila(int n, int c){
+	for(int i=0; i<n; ++i)
+		for(int j=c; j>=peso[i]; --j)
+			pd[j] = max(pd[j], valor[i]+pd[j-peso[i]] );
+	return *max_element(pd,pd+c+1);
+}
+```
 
 ### Longest Increasing Subsequence
 
