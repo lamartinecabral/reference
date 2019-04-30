@@ -59,8 +59,9 @@
   - [Pontos e Linhas](#pontos-e-linhas)
   - [Biblioteca Completa](#biblioteca-completa)
 - [**Misc**](#misc)
-  - [Bash Script](#bash-script)
+  - [Codeforces Filter Script](#codeforces-filter-script)
   - [Visual Code Settings](#visual-code-settings)
+  - [Bash Script](#bash-script)
   - [Template](#template)
 
 # Algoritmos
@@ -1920,6 +1921,25 @@ bool IsSimple(const vector<PT> &p) {
 
 # Misc
 
+### Codeforces Filter Script
+
+```javascript
+for(let i=1; i<=200; i++){
+	if(document.getElementsByTagName("tr")[i].children[1].children[0].alt != "Brazil"){
+		document.getElementsByTagName("tr")[i].style.display = "none";}}
+```
+
+### Visual Code Settings
+
+```
+"editor.trimAutoWhitespace": false,
+"editor.autoClosingBrackets": false,
+"editor.detectIndentation": false,
+"editor.insertSpaces": false,
+"editor.acceptSuggestionOnEnter": "off",
+"extensions.ignoreRecommendations": true
+```
+
 ### Bash Script
 
 ```
@@ -1948,17 +1968,6 @@ else
 		./${1%.*}.out < $2
 	fi
 fi
-```
-
-### Visual Code Settings
-
-```
-"editor.trimAutoWhitespace": false,
-"editor.autoClosingBrackets": false,
-"editor.detectIndentation": false,
-"editor.insertSpaces": false,
-"editor.acceptSuggestionOnEnter": "off",
-"extensions.ignoreRecommendations": true
 ```
 
 ### Template
