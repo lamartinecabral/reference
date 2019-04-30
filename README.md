@@ -1925,8 +1925,9 @@ bool IsSimple(const vector<PT> &p) {
 
 ```javascript
 for(let i=1; i<=200; i++){
-	if(document.getElementsByTagName("tr")[i].children[1].children[0].alt != "Brazil"){
-		document.getElementsByTagName("tr")[i].style.display = "none";}}
+	let elem = document.getElementsByTagName("tr")[i];
+	if(!(elem.children[1].children[0].alt == "Brazil" || elem.children[1].children[0].alt == "Бразилия")){
+		elem.style.display = "none";}}
 ```
 
 ### Visual Code Settings
