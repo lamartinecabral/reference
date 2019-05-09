@@ -10,6 +10,7 @@
   - [Ordered Set](#ordered-set)
   - [Segment Tree](#segment-tree)
     - [Lazy Propagation](#lazy-propagation)
+    - [Dynamic Seg Tree](#dynamic-seg-tree)
   - [Trie](#trie)
 	- [XOR trie](#xor-trie)
   - [Suffix Array & Longest Common Prefix Array](#suffix-array--longest-common-prefix-array)
@@ -338,6 +339,51 @@ struct SegmentTree {
 	int query(int a, int b) { return query(1, 0, size - 1, a, b); }
 	void update(int a, int b, int k) { update(1, 0, size - 1, a, b, k); }
 };
+```
+
+##### Dynamic Seg Tree
+
+```c
+struct node{
+	int x;
+	int l,r,child[2];
+	node(int X, int L, int R){ x = X; l = L; r = R; child[0] = child[1] = 0; }
+};
+vector<node> st;
+
+int neutro = 0;
+int combine(int x, int y){ return x+y; }
+
+int minn = -1e9-10; int maxn = 1e9+10;
+void init(){
+	st.reserve(2e6);
+	st.push_back(node(neutro,-1,-1)); // null node
+	st.push_back(node(neutro,0,maxn-minn));
+}
+
+int I,X;
+void update(int i){
+	if(I == st[i].l && I == st[i].r){ st[i].x += X; return; }
+	int m = (st[i].l*1LL+st[i].r)/2;
+	int k = I > m;
+	if(st[i].child[k] == 0){
+		st[i].child[k] = st.size();
+		if(I > m) st.push_back(node(neutro, m+1, st[i].r));
+		else st.push_back(node(neutro, st[i].l, m));
+	}
+	update(st[i].child[k]);
+	st[i].x = combine( st[st[i].child[0]].x , st[st[i].child[1]].x );
+}
+void update(int i, int x){ I = i-minn; X = x; update(1); }
+
+int L,R;
+int query(int i){
+	if(i == 0) return neutro;
+	if(L <= st[i].l && st[i].r <= R) return st[i].x;
+	if(R < st[i].l || st[i].r < L) return neutro;
+	return combine( query(st[i].child[0]), query(st[i].child[1]) );
+}
+int query(int l, int r){ L = l-minn, R = r-minn; return query(1); }
 ```
 
 ### Trie
