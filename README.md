@@ -44,6 +44,7 @@
 - [**Programação Dinâmica**](#programação-dinâmica)
   - [Coin Change Problem](#coin-change-problem)
   - [Knapsack 0-1 Problem](#knapsack-0-1-problem)
+    - [Backtracking Magic](#backtracking-magic)
   - [Longest Increasing Subsequence](#longest-increasing-subsequence)
   - [Digit DP](#digit-dp)
 - [**Matemática**](#matemática)
@@ -1417,6 +1418,61 @@ int mochila(int n, int c){
 		for(int j=c; j>=peso[i]; --j)
 			pd[j] = max(pd[j], valor[i]+pd[j-peso[i]] );
 	return *max_element(pd,pd+c+1);
+}
+```
+
+##### Backtracking Magic
+
+```c
+#include <bits/stdc++.h>
+using namespace std;
+
+int n,c;
+vector< pair<int,int> > v;
+int res,aux;
+double c2,aux2;
+
+void bt(int i){
+	if(i == n) return;
+ 
+	aux2 = 0; c2 = c;
+	for(int j=i; j<n && c2; j++){
+		if(v[j].first <= c2){
+			c2 -= v[j].first; aux2 += v[j].second;
+		} else {
+			aux2 += (v[j].second*c2)/v[j].first;
+			c2 = 0;
+		}
+	}
+	if(aux2 + aux <= res) return;
+  
+	if(v[i].first <= c){
+		c -= v[i].first;
+		aux += v[i].second;
+		if(aux > res) res = aux;
+		bt(i+1);
+		aux -= v[i].second;
+		c += v[i].first;
+	}
+	bt(i+1);
+}
+ 
+int main(){
+	
+	cin>>n>>c;
+	for(int i=0; i<n; i++){
+		int x,y; cin>>x>>y;
+		v.push_backb({x,y});
+	}
+ 
+	sort(v.begin(), v.end(), [](pii a, pii b){
+		return (a.second+0.0)/a.first > (b.second+0.0)/b.first;
+	});
+	
+	bt(0);
+	cout<<res<<endl;
+ 
+	return 0;
 }
 ```
 
