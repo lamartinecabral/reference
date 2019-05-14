@@ -147,22 +147,28 @@ void kmp(){
 ```c
 ll bit[SZ];
 
-ll qry(int idx) {
+ll qry(int i) {
 	ll sum = 0;
-	for(int i=idx; i; i -= i&-i) sum += bit[i];
+	while(i){
+		sum += bit[i];
+		i -= i&-i;
+	}
 	return sum;
 }
-void upd(int idx, ll k){
-	for(int i=idx; i<SZ; i += i&-i) bit[i] += k;
+void upd(int i, ll k){
+	while(i < SZ){
+		bit[i] += k;
+		i += i&-i;
+	}
 }
 ```
 
 ### Union Find
 
 ```c
-int pai[SZ]; // inicializar com pai[i] = i;
+int pai[SZ];
 
-int find(int i){ return pai[i]==i ? i : pai[i] = find(pai[i]); }
+int find(int i){ return pai[i] == 0 ? i : pai[i] = find(pai[i]); }
 void uni(int i, int j){ pai[find(i)] = find(j); }
 ```
 
