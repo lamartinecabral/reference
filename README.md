@@ -352,46 +352,33 @@ struct SegmentTree {
 ##### Dynamic Seg Tree
 
 ```c
-struct node{
-	int x;
-	int l,r,child[2];
-	node(int X, int L, int R){ x = X; l = L; r = R; child[0] = child[1] = 0; }
-};
-vector<node> st;
+const int SZ = 4e6;
+int st[SZ], child[SZ][2], size = 2;
 
+int minn = -1e9-10; int maxn = 1e9+10; // [l,r)
 int neutro = 0;
 int combine(int x, int y){ return x+y; }
 
-int minn = -1e9-10; int maxn = 1e9+10;
-void init(){
-	st.reserve(2e6);
-	st.push_back(node(neutro,-1,-1)); // null node
-	st.push_back(node(neutro,0,maxn-minn));
-}
-
 int I,X;
-void update(int i){
-	if(I == st[i].l && I == st[i].r){ st[i].x += X; return; }
-	int m = (st[i].l*1LL+st[i].r)/2;
-	int k = I > m;
-	if(st[i].child[k] == 0){
-		st[i].child[k] = st.size();
-		if(k) st.push_back(node(neutro, m+1, st[i].r));
-		else st.push_back(node(neutro, st[i].l, m));
-	}
-	update(st[i].child[k]);
-	st[i].x = combine( st[st[i].child[0]].x , st[st[i].child[1]].x );
+void update(int i, int l, int r){
+	if(I == l && I == r-1){ st[i] += X; return; }
+	int m = (l+r)/2;
+	int k = I >= m;
+	if(child[i][k] == 0) child[i][k] = size++;
+	update(child[i][k], k?m:l, k?r:m);
+	st[i] = combine( st[child[i][0]] , st[child[i][1]] );
 }
-void update(int i, int x){ I = i-minn; X = x; update(1); }
+void update(int i, int x){ I = i; X = x; update(1,minn,maxn); }
 
-int L,R;
-int query(int i){
+int L,R; // [L,R)
+int query(int i, int l, int r){
 	if(i == 0) return neutro;
-	if(L <= st[i].l && st[i].r <= R) return st[i].x;
-	if(R < st[i].l || st[i].r < L) return neutro;
-	return combine( query(st[i].child[0]), query(st[i].child[1]) );
+	if(L <= l && r <= R) return st[i];
+	if(R <= l || r <= L) return neutro;
+	int m = (l+r)/2;
+	return combine( query(child[i][0],l,m), query(child[i][1],m,r) );
 }
-int query(int l, int r){ L = l-minn, R = r-minn; return query(1); }
+int query(int l, int r){ L = l, R = r; return query(1,minn,maxn); }
 ```
 
 ##### Dynamic Seg Tree 2D
