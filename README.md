@@ -384,70 +384,47 @@ int query(int l, int r){ L = l, R = r; return query(1,minn,maxn); }
 ##### Dynamic Seg Tree 2D
 
 ```c
-struct node{
-	int w;
-	int x0,y0,x1,y1,child[4];
-	node(int W, int X0, int Y0, int X1, int Y1){
-		w = W;
-		x0 = X0; y0 = Y0;
-		x1 = X1; y1 = Y1;
-		memset(child,0,sizeof(int)*4);
-	}
-};
-vector<node> st;
+const int SZ = 4e6;
+int st[SZ], child[SZ][4], size = 2;
 
 int neutro = 0; // edit here
 int combine(int a, int b, int c, int d){ return a+b+c+d; }
-
-int minn = 0; int maxn = 1e2; // edit here
-void init(){
-	st.reserve(2e6);
-	st.push_back(node(neutro,-1,-1,-1,-1)); // null node
-	st.push_back(node(neutro,0,0,maxn-minn,maxn-minn));
-}
+int minn = -1e2; int maxn = 1e2; // edit here
 
 int W,X,Y;
-void update(int i){
-	if( X == st[i].x0 && X == st[i].x1 &&
-		Y == st[i].y0 && Y == st[i].y1){ st[i].w += W; return; }
-	int mx = (st[i].x0*1LL+st[i].x1)/2;
-	int my = (st[i].y0*1LL+st[i].y1)/2;
+void update(int i, int x0, int y0, int x1, int y1){
+	if( X == x0 && X == x1-1 &&
+		Y == y0 && Y == y1-1){ st[i] += W; return; }
+	int mx = (x0+x1)/2;
+	int my = (y0+y1)/2;
 	int k = 0;
-	if(X > mx) k += 1;
-	if(Y > my) k += 2;
-	if(st[i].child[k] == 0){
-		st[i].child[k] = st.size();
-		int v[] = {st[i].x0, st[i].y0, mx, my};
-		if(k&1){ v[0] = mx+1; v[2] = st[i].x1; }
-		if(k&2){ v[1] = my+1; v[3] = st[i].y1; }
-		st.push_back(node(neutro, v[0],v[1],v[2],v[3]));
-	}
-	update(st[i].child[k]);
-	st[i].w = combine(
-		st[st[i].child[0]].w , st[st[i].child[1]].w,
-		st[st[i].child[2]].w , st[st[i].child[3]].w
+	if(X >= mx) k += 1;
+	if(Y >= my) k += 2;
+	if(child[i][k] == 0) child[i][k] = size++;
+	update(child[i][k], (k&1)?mx:x0, (k&2)?my:y0, (k&1)?x1:mx, (k&2)?y1:my);
+	st[i] = combine(
+		st[child[i][0]] , st[child[i][1]],
+		st[child[i][2]] , st[child[i][3]]
 	);
 }
 void update(int w, int x, int y){
-	X = x-minn; Y = y-minn; W = w; update(1);
+	X = x; Y = y; W = w; update(1,minn,minn,maxn,maxn);
 }
 
-int X0,Y0,X1,Y1;
-int query(int i){
+int X0,Y0,X1,Y1; // not including line x1 and column y1
+int query(int i, int x0, int y0, int x1, int y1){
 	if(i == 0) return neutro;
-	if( X0 <= st[i].x0 && st[i].x1 <= X1 &&
-		Y0 <= st[i].y0 && st[i].y1 <= Y1) return st[i].w;
-	if( X1 < st[i].x0 || Y1 < st[i].y0 || 
-		st[i].x1 < X0 || st[i].y1 < Y0) return neutro;
+	if( X0 <= x0 && x1 <= X1 && Y0 <= y0 && y1 <= Y1) return st[i];
+	if( X1 <= x0 || Y1 <= y0 || x1 <= X0 || y1 <= Y0) return neutro;
+	int mx = (x0+x1)/2;
+	int my = (y0+y1)/2;
 	return combine(
-		query(st[i].child[0]), query(st[i].child[1]),
-		query(st[i].child[2]), query(st[i].child[3])
+		query(child[i][0],x0,y0,mx,my), query(child[i][1],mx,y0,x1,my),
+		query(child[i][2],x0,my,mx,y1), query(child[i][3],mx,my,x1,y1)
 	);
 }
 int query(int x0, int y0, int x1, int y1){
-	X0 = x0-minn, Y0 = y0-minn;
-	X1 = x1-minn, Y1 = y1-minn;
-	return query(1);
+	X0 = x0, Y0 = y0; X1 = x1, Y1 = y1; return query(1,minn,minn,maxn,maxn);
 }
 ```
 
