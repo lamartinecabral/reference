@@ -355,7 +355,7 @@ struct SegmentTree {
 const int SZ = 4e6;
 int st[SZ], child[SZ][2], size = 2;
 
-int minn = -1e9-10; int maxn = 1e9+10; // [l,r)
+int minl = -1e9-10; int maxr = 1e9+10; // [l,r)
 int neutro = 0;
 int combine(int x, int y){ return x+y; }
 
@@ -368,7 +368,7 @@ void update(int i, int l, int r){
 	update(child[i][k], k?m:l, k?r:m);
 	st[i] = combine( st[child[i][0]] , st[child[i][1]] );
 }
-void update(int i, int x){ I = i; X = x; update(1,minn,maxn); }
+void update(int i, int x){ I = i; X = x; update(1,minl,maxr); }
 
 int L,R; // [L,R)
 int query(int i, int l, int r){
@@ -378,7 +378,7 @@ int query(int i, int l, int r){
 	int m = (l+r)/2;
 	return combine( query(child[i][0],l,m), query(child[i][1],m,r) );
 }
-int query(int l, int r){ L = l, R = r; return query(1,minn,maxn); }
+int query(int l, int r){ L = l, R = r; return query(1,minl,maxr); }
 ```
 
 ##### Dynamic Seg Tree 2D
@@ -388,13 +388,13 @@ const int SZ = 4e6;
 int st[SZ], child[SZ][4], size = 2;
 
 int neutro = 0; // edit here
-int combine(int a, int b, int c, int d){ return a+b+c+d; }
-int minn = -1e2; int maxn = 1e2; // edit here
+int combine(int a, int b){ return a+b; }
+int minn = -1e2; int maxx = 1e2; // edit here
 
 int W,X,Y;
 void update(int i, int x0, int y0, int x1, int y1){
-	if( X == x0 && X == x1-1 &&
-		Y == y0 && Y == y1-1){ st[i] += W; return; }
+	if( X == x0 && X == x1-1 && Y == y0 && Y == y1-1){
+		st[i] += W; return; }
 	int mx = (x0+x1)/2;
 	int my = (y0+y1)/2;
 	int k = 0;
@@ -402,29 +402,30 @@ void update(int i, int x0, int y0, int x1, int y1){
 	if(Y >= my) k += 2;
 	if(child[i][k] == 0) child[i][k] = size++;
 	update(child[i][k], (k&1)?mx:x0, (k&2)?my:y0, (k&1)?x1:mx, (k&2)?y1:my);
-	st[i] = combine(
-		st[child[i][0]] , st[child[i][1]],
-		st[child[i][2]] , st[child[i][3]]
-	);
+	
+	st[i] = neutro;
+	for(int k=0; k<4; k++)
+		st[i] = combine( st[i], st[child[i][k]] );
 }
 void update(int w, int x, int y){
-	X = x; Y = y; W = w; update(1,minn,minn,maxn,maxn);
+	X = x; Y = y; W = w; update(1,minn,minn,maxx,maxx);
 }
 
 int X0,Y0,X1,Y1; // not including line x1 and column y1
 int query(int i, int x0, int y0, int x1, int y1){
 	if(i == 0) return neutro;
-	if( X0 <= x0 && x1 <= X1 && Y0 <= y0 && y1 <= Y1) return st[i];
+	if( X0 <= x0 && Y0 <= y0 && x1 <= X1 && y1 <= Y1) return st[i];
 	if( X1 <= x0 || Y1 <= y0 || x1 <= X0 || y1 <= Y0) return neutro;
 	int mx = (x0+x1)/2;
 	int my = (y0+y1)/2;
-	return combine(
-		query(child[i][0],x0,y0,mx,my), query(child[i][1],mx,y0,x1,my),
-		query(child[i][2],x0,my,mx,y1), query(child[i][3],mx,my,x1,y1)
-	);
+	
+	int res = neutro;
+	for(int k=0; k<4; k++) res = combine(res,
+		query(child[i][k], (k&1)?mx:x0, (k&2)?my:y0, (k&1)?x1:mx, (k&2)?y1:my)
+	); return res;
 }
 int query(int x0, int y0, int x1, int y1){
-	X0 = x0, Y0 = y0; X1 = x1, Y1 = y1; return query(1,minn,minn,maxn,maxn);
+	X0 = x0, Y0 = y0; X1 = x1, Y1 = y1; return query(1,minn,minn,maxx,maxx);
 }
 ```
 
