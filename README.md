@@ -2068,10 +2068,9 @@ bool IsSimple(const vector<PT> &p) {
 ### Codeforces Filter Script
 
 ```javascript
-for(let i=1; i<=200; i++){
-	let elem = document.getElementsByTagName("tr")[i];
-	if(!(elem.children[1].children[0].alt == "Brazil" || elem.children[1].children[0].alt == "Бразилия")){
-		elem.style.display = "none";}}
+for(let e=document.getElementsByTagName("tr")[1], i=0; i<200; i++, e=e.nextElementSibling)
+	if(e.children[1].children[0].alt != "Brazil" && e.children[1].children[0].alt != "Бразилия")
+		e.style.display = "none";
 ```
 
 ### Visual Code Settings
