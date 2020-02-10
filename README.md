@@ -1893,7 +1893,7 @@ double dist2(PT p, PT q) { return dot(p-q,p-q); }
 double dist(PT p, PT q) { return sqrt(dist2(p,q)); }
 double mdist(PT p, PT q) { return fabs(p.x-q.x)+fabs(p.y-q.y); }
 double cross(PT p, PT q) { return p.x*q.y-p.y*q.x; }
-ostream &operator<<(ostream &os, const PT &p) {os<<"("<<p.x<<","<<p.y<<")";}
+ostream &operator<<(ostream &os, const PT &p) {return os<<"("<<p.x<<","<<p.y<<")";}
 // rotate a point CCW or CW around the origin
 PT RotateCCW90(PT p) { return PT(-p.y,p.x); }
 PT RotateCW90(PT p) { return PT(p.y,-p.x); }
@@ -2070,7 +2070,7 @@ bool IsSimple(const vector<PT> &p) {
 ### Codeforces Filter Script
 
 ```javascript
-for(let e=document.getElementsByTagName("tr")[1], i=0; i<200; i++, e=e.nextElementSibling)
+for(let e = $("tr")[1]; e; e = e.nextElementSibling)
 	if(e.children[1].children[0].alt != "Brazil" && e.children[1].children[0].alt != "Бразилия")
 		e.style.display = "none";
 ```
@@ -2078,8 +2078,11 @@ for(let e=document.getElementsByTagName("tr")[1], i=0; i<200; i++, e=e.nextEleme
 ### Visual Code Settings
 
 ```
+"window.menuBarVisibility": "toggle",
+"workbench.activityBar.visible": true,
+"workbench.statusBar.visible": false,
 "editor.trimAutoWhitespace": false,
-"editor.autoClosingBrackets": false,
+"editor.autoClosingBrackets": "never",
 "editor.detectIndentation": false,
 "editor.insertSpaces": false,
 "editor.acceptSuggestionOnEnter": "off",
