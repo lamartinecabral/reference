@@ -1799,8 +1799,9 @@ bool rabin(ll n) {
 	} return true;
 }
 
-ll Lrand(){ ll tmp=rand(); return (tmp<<31)|rand(); }
+ll Lrand(){ return (((ll)rand())<<31)^rand(); }
 ll rho(ll n){
+	if(n == 1) return 1;
 	if(rabin(n)) return n;
 	if(n % 2 == 0) return 2;
 	ll d, c = Lrand() % n, x = Lrand() % n, y = x;
@@ -1809,7 +1810,7 @@ ll rho(ll n){
 		y = modSum(modMul(y, y, n), c, n);
 		d = __gcd(abs(x - y), n);
 	} while(d == 1);
-	return d;
+	return d == n ? rho(n) : d;
 }
 ```
 
