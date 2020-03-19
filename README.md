@@ -1698,13 +1698,13 @@ int aux = 1;
 map<int,int> f;
 map<int,int>::iterator it;
 void bt(){
-	if(it == f.end()){ divs.push_back(aux); --it; return; }
+	if(it == f.end()){ divs.push_back(aux); return; }
 	int ant = aux;
-	++it; bt();
+	++it; bt(); --it;
 	for(int i=0; i<it->second; ++i){
 		aux *= it->first;
-		++it; bt();
-	} aux = ant; if(it != f.begin()) --it;
+		++it; bt(); --it;
+	} aux = ant;
 }
 ```
 
@@ -1764,6 +1764,7 @@ vi powerx(vi &a, int b){
 O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um fator primo P, provavelmente o menor, com complexidade O(sqrt(P)). Para isso, é necessario primeiro verificar se o numero é composto com o teste de primalidade Miller-Rabin.
 
 ```c
+const int INF = 0x3f3f3f3f;
 ll modSum(ll a, ll b, ll c){
 	return (a+b)%c;
 }
@@ -1957,6 +1958,7 @@ ostream &operator<<(ostream &os, const line &r){return os<<"["<<r.a<<","<<r.b<<"
 ##### Biblioteca Completa
 
 ```c
+const double EPS = 1e-9;
 struct PT {
 	double x, y;
 	PT() {}
@@ -2207,67 +2209,50 @@ fi
 
 ```c
 //#include <bits/stdc++.h>/*
-#include <unordered_map>
-#include <functional> //greater
 #include <algorithm> //sort
 #include <iostream>
-#include <iterator>
-#include <utility> //pair
-#include <sstream>
 #include <cstring> //memset
-#include <complex>
-#include <cassert>
-#include <random>
-#include <cstdio>
-#include <string>
 #include <vector>
-#include <cctype> //isaplha, tolower
-#include <deque>
 #include <queue>
 #include <stack>
 #include <array>
-#include <cmath> //sqrt, sin
 #include <ctime>
 #include <map>
 #include <set>
 //*/
 
-#define int long long
-#define ll long long
-#define vi vector<int>
-#define pii pair<int,int>
-#define pb push_back
-#define mp make_pair
-#define fi first
-#define se second
-#define endl '\n'
 using namespace std;
 
-template<class T> ostream &operator<<(ostream &os, const pair<T,T> &p){
-	return os<<"("<<p.fi<<","<<p.se<<")";}
-template<class T> ostream &operator<<(ostream &os, const pair<const T,T> &p){
-	return os<<"("<<p.fi<<","<<p.se<<")";}
-template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
-	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
-template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
-	for(auto x: p) os<<x<<' '; return os;}
-#define dbug(X) cerr<<#X<<" = "<<X<<endl;
+#define dbug(X) cerr<<#X<<" = "<<X<<endl
 #define _ <<" _ "<<
-#define FOR(X,L,R) for(int X=L;X<R;X++)
 #define print(X) {for(auto A:X)cout<<A<<' ';cout<<endl;}
 #define mset(V,X) memset(V,X,sizeof(V))
 #define all(X) (X).begin(),(X).end()
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
 
+#define fi first
+#define se second
+template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
+	return os<<"("<<p.fi<<","<<p.se<<")";}
+template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
+	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
+template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
+	for(auto x: p) os<<x<<' '; return os;}
+#define FOR(X,L,R) for(int X=L;X<R;X++)
+#define int long long
+#define ll long long
+#define vi vector<int>
+#define pii pair<int,int>
+#define pb push_back
+#define mp make_pair
+#define endl '\n'
+
 const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 2e5+20;
 
-int32_t main(){
-	ios::sync_with_stdio(false);cin.tie(0);
-	
-	
+signed main(){
 
 	return 0;
 }
