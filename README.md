@@ -1799,7 +1799,8 @@ bool rabin(ll n) {
 	} return true;
 }
 
-ll Lrand(){ return (((ll)rand())<<31)^rand(); }
+ll Irand(){ return (((ll)rand())<<15)^rand(); }
+ll Lrand(){ return (Irand()<<30)^Irand(); }
 ll rho(ll n){
 	if(n == 1) return 1;
 	if(rabin(n)) return n;
