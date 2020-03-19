@@ -2211,14 +2211,15 @@ fi
 
 ```c
 //#include <bits/stdc++.h>/*
-#include <algorithm> //sort
+#include <algorithm>
 #include <iostream>
-#include <cstring> //memset
+#include <cstring>
 #include <vector>
 #include <queue>
 #include <stack>
 #include <array>
 #include <ctime>
+#include <cmath>
 #include <map>
 #include <set>
 //*/
@@ -2233,10 +2234,8 @@ using namespace std;
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
 
-#define fi first
-#define se second
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
-	return os<<"("<<p.fi<<","<<p.se<<")";}
+	return os<<"("<<p.first<<","<<p.second<<")";}
 template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
@@ -2248,6 +2247,8 @@ template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 #define pii pair<int,int>
 #define pb push_back
 #define mp make_pair
+#define fi first
+#define se second
 #define endl '\n'
 
 const double EPS = 1e-9, PI = acos(-1);
