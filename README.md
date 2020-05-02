@@ -2251,6 +2251,23 @@ template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 #define se second
 #define endl '\n'
 
+int _rv; char _rc, _rn, _rf;
+bool rint(int &x){
+    _rv = 0; _rn = 1; _rf = false;
+    while(_rc = getchar()){
+        if(_rc == -1) return _rf ? (x = _rv*_rn, true) : false;
+        else if(_rc == ' ' || _rc == '\n'){ if(_rf) break; }
+        else if(_rc == '-') _rn = -1;
+        else{ _rv = 10*_rv + (_rc-'0'); _rf = true; }
+    } return x = _rv*_rn, true;
+}
+bool rint(int &x, int &y){
+    if(rint(x)) if(rint(y)) return 1; return 0; }
+bool rint(int &x, int &y, int &z){
+    if(rint(x)) if(rint(y,z)) return 1; return 0; }
+bool rint(int &x, int &y, int &z, int &w){
+    if(rint(x,y)) if(rint(z,w)) return 1; return 0; }
+
 const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 2e5+20;
