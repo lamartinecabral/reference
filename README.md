@@ -75,9 +75,9 @@
 ```c
 bool test(int m){}
 
-ll bin(ll L, ll R){
+int bin(int L, int R){
 	while(L<=R){
-		ll m = (L+R)/2;
+		int m = (L+R)/2;
 		test(m) ? L = m+1 : R = m-1;
 	}
 	return L; // primeiro false
@@ -91,7 +91,7 @@ ll bin(ll L, ll R){
 int block;
 vector<int> v;
 vector<array<int,3> > query; // {L,R,index}
-int answer[SZ];
+int answer[100010];
 
 void insere(int i){ }
 void apaga(int i){ }
@@ -146,17 +146,18 @@ void kmp(){
 ### Fenwick Tree (BIT)
 
 ```c
-ll bit[SZ];
+#define SZ 100010
+int bit[SZ];
 
-ll qry(int i) {
-	ll sum = 0;
+int qry(int i) {
+	int sum = 0;
 	while(i){
 		sum += bit[i];
 		i -= i&-i;
 	}
 	return sum;
 }
-void upd(int i, ll k){
+void upd(int i, int k){
 	while(i < SZ){
 		bit[i] += k;
 		i += i&-i;
@@ -167,7 +168,7 @@ void upd(int i, ll k){
 ### Union Find
 
 ```c
-int pai[SZ];
+int pai[100010];
 
 int find(int i){ return pai[i] == 0 ? i : pai[i] = find(pai[i]); }
 void uni(int i, int j){ pai[find(i)] = find(j); }
@@ -196,14 +197,14 @@ struct SparseTable{
 
 ```c
 int n,raiz;
-ll v[100010];
-ll bl[325];
+int v[100010];
+int bl[325];
 
 void build(){
 	raiz = sqrt(n);
-	FOR(i,0,n) bl[i/raiz] += v[i];
+	for(int i=0; i<n; i++) bl[i/raiz] += v[i];
 }
-ll query(int l, int r){
+int query(int l, int r){
 	ll sum = 0;
 	for(; l<r and l%raiz!=0; l++){
 		sum += v[l];
@@ -214,7 +215,7 @@ ll query(int l, int r){
 	}
 	return sum;
 }
-void pointupdate(int i, ll k){
+void pointupdate(int i, int k){
 	int b = i/raiz;
 	bl[b] += k - v[i];
 	v[i] = k;
@@ -240,8 +241,8 @@ using namespace __gnu_pbds;
 typedef int var;
 
 int k;
-var st[SZ*4];
-var v[SZ];
+var st[400040];
+var v[100010];
 
 var neutro = 0;
 var combine(var a, var b){
@@ -473,17 +474,17 @@ bool busca(string &s){
 ```c
 struct trienode {
 	int child[2], size;
-	trienode(){ mset(child,0); size = 0; }
+	trienode(){ memset(child,0,sizeof child); size = 0; }
 };
 vector<trienode> trie;
-void init(){ trie.clear(); trie.pb(trienode()); }
+void init(){ trie.clear(); trie.push_back(trienode()); }
 void insere(int x){
 	int i = 0;
 	for(int k = 30; k >= 0; k--){
 		int c = x&(1<<k) ? 1 : 0;
 		if(trie[i].child[c] == 0){
 			trie[i].child[c] = trie.size();
-			trie.pb(trienode()); }
+			trie.push_back(trienode()); }
 		i = trie[i].child[c];
 		trie[i].size++;
 }}
@@ -518,6 +519,7 @@ void remove(int x){ if(!busca(x)) return;
 ### Suffix Array & Longest Common Prefix Array
 
 ```c
+const int MAXN = 100010;
 char str[MAXN]; // the input string, up to 100K characters
 int n; // the length of input string
 int RA[MAXN], tempRA[MAXN]; // rank array and temporary rank array
@@ -787,18 +789,19 @@ struct minqueue{
 ##### BIT Range Update Range Query
 
 ```c
-ll bit1[SZ], bit2[SZ];
+#define SZ 100010
+int bit1[SZ], bit2[SZ];
 
 // retorna o somatorio a[1]+a[2]+...+a[i]
-ll query(int idx){
-	ll sum1=0, sum2=0;
+int query(int idx){
+	int sum1=0, sum2=0;
 	for(int i = idx; i; i -= i&-i) sum1 += bit1[i];
 	for(int i = idx; i; i -= i&-i) sum2 += bit2[i];
 	return sum1*idx - sum2;
 }
 
 // incrementa x em todos a[i],a[i+1],...,a[N]
-void update(int idx, ll x){
+void update(int idx, int x){
 	for(int i = idx; i<SZ; i += i&-i) bit1[i] += x;
 	for(int i = idx; i<SZ; i += i&-i) bit2[i] += x*(idx-1);
 }
@@ -807,6 +810,7 @@ void update(int idx, ll x){
 ##### BIT 2D
 
 ```c
+#define SZ 1010
 int bit[SZ][SZ];
 
 int query(int idx, int jdx){
@@ -816,7 +820,7 @@ int query(int idx, int jdx){
 			sum += bit[i][j];
 	return sum;
 }
-void update(int idx, int jdx, ll k){
+void update(int idx, int jdx, int k){
 	for(int i=idx; i<SZ; i += i&-i)
 		for(int j=jdx; j<SZ; j += j&-j)
 			bit[i][j] += k;
@@ -826,7 +830,7 @@ var rangequery(int x1, int y1, int x2, int y2){
 	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
 }
 // para range update point query
-void rangeupdate(int x1, int y1, int x2, int y2, var k){
+void rangeupdate(int x1, int y1, int x2, int y2, int k){
 	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
 }
 ```
@@ -834,31 +838,32 @@ void rangeupdate(int x1, int y1, int x2, int y2, var k){
 ##### BIT 2D Range Update Range Query
 
 ```c
-ll bit[4][SZ][SZ];
+#define SZ 1010
+int bit[4][SZ][SZ];
 
-void upd(int id, int x, int y, ll k){
+void upd(int id, int x, int y, int k){
 	for(int i = x; i<SZ; i += i&-i)
 		for(int j = y; j<SZ; j += j&-j)
 			bit[id][i][j] += k;
 }
 
-ll qry(int id, int x, int y){
-	ll sum = 0;
+int qry(int id, int x, int y){
+	int sum = 0;
 	for(int i = x; i>0; i -= i&-i)
 		for(int j = y; j>0; j -= j&-j)
 			sum += bit[id][i][j];
 	return sum;
 }
 
-void update(int x, int y, ll k){
+void update(int x, int y, int k){
 	upd(0, x, y, k);
 	upd(1, x, y, k*(x-1) );
 	upd(2, x, y, k*(y-1) );
 	upd(3, x, y, k*(x-1)*(y-1) );
 }
 
-ll query(int x, int y){
-	ll sum = 0;
+int query(int x, int y){
+	int sum = 0;
 	sum += qry(0,x,y)*x*y;
 	sum -= qry(1,x,y)*y;
 	sum -= qry(2,x,y)*x;
@@ -866,11 +871,11 @@ ll query(int x, int y){
 	return sum;
 }
 
-ll rangequery(int x1, int y1, int x2, int y2){
+int rangequery(int x1, int y1, int x2, int y2){
 	return query(x2,y2) - query(x2,y1-1) - query(x1-1,y2) + query(x1-1,y1-1);
 }
 
-void rangeupdate(int x1, int y1, int x2, int y2, ll k){
+void rangeupdate(int x1, int y1, int x2, int y2, int k){
 	update(x1,y1,k); update(x2+1,y1,-k); update(x1,y2+1,-k); update(x2+1,y2+1,k);
 }
 ```
@@ -880,7 +885,7 @@ void rangeupdate(int x1, int y1, int x2, int y2, ll k){
 ```c
 struct ordered_multiset{
 	
-	vi bit; int contador, N, LOGN, fix;
+	vector<int> bit; int contador, N, LOGN, fix;
 	ordered_multiset(int mini, int maxi){
 		N = maxi - mini + 2;
 		fix = 1 - mini;
@@ -916,10 +921,10 @@ struct ordered_multiset{
 ##### Ordered Multiset
 
 ```c
-#define var pair<int,int>
-#define ordered_set tree<var,null_type,less<var>,rb_tree_tag,tree_order_statistics_node_update>
+#define pii pair<int,int>
+#define ordered_set tree<pii,null_type,less<pii>,rb_tree_tag,tree_order_statistics_node_update>
 
-int id = 0; map<int,vi> ids;
+int id = 0; map<int, vector<int> > ids;
 void insere(ordered_set &s, int x){
 	s.insert({x,++id}); ids[x].pb(id);
 }
@@ -959,7 +964,7 @@ void breset(int i){
 
 ```c
 struct ivi{ // inversed_vector<int>
-	vi a;
+	vector<int> a;
 	ivi operator=(vi v) { a = v; reverse(all(a)); return (*this); }
 	int& operator[](int i){ return a[a.size()-1-i]; }
 	void push_front(int x){ a.push_back(x); }
@@ -974,8 +979,8 @@ struct ivi{ // inversed_vector<int>
 #define lll __int128_t
 ostream &operator<<(ostream &os, lll n){
 	int s = n<0 ? -1 : 1; n*=s;
-	ll x = 1e13; deque<ll> v;
-	while(n){ v.push_front((ll)(n%x)); n/=x; }
+	long long x = 1e13; deque<long long> v;
+	while(n){ v.push_front(1LL*(n%x)); n/=x; }
 	for(int i:v){ os<<s*i; s*=s; } return os; }
 ```
 
@@ -984,6 +989,7 @@ ostream &operator<<(ostream &os, lll n){
 ### Busca em largura (BFS) e profundidade (DFS)
 
 ```c
+#define SZ 100010
 vector<int> g[SZ];
 bool vis[SZ];
 
@@ -1011,11 +1017,12 @@ void dfs(int v){
 ### Dijkstra
 
 ```c
+#define SZ 100010
 vector<pii> g[SZ];
 int d[SZ];
 
 void dijkstra(int start){
-	mset(d,INF); d[start] = 0;
+	memset(d,INF,sizeof d); d[start] = 0;
 
 	typedef array<int,2> vet;
 	priority_queue< vet, vector<vet>, greater<vet> > pq;
@@ -1038,6 +1045,7 @@ void dijkstra(int start){
 
 ```c
 // distance matrix
+#define SZ 300
 int g[SZ][SZ];
 
 void floyd(int n){
@@ -1051,17 +1059,18 @@ void floyd(int n){
 ### Spanning Tree (MST)
 
 ```c
+#define SZ 100010
 vector<pii> g[SZ],h[SZ];
 	
 void prim(){
 	priority_queue< array<int,3> > pq;
 	for(auto p: g[1]) pq.push( {-p.se, p.fi, 1} );
-	bool vis[SZ]; mset(vis,0); vis[1] = 1;
+	bool vis[SZ]; memset(vis,0,sizeof vis); vis[1] = 1;
 	while(!pq.empty()){
 		int v = pq.top()[1], u = pq.top()[2];
 		int d = -pq.top()[0]; pq.pop();
 		if(vis[v]) continue; else vis[v]=1;
-		h[v].pb({u,d}); h[u].pb({v,d});
+		h[v].push_back({u,d}); h[u].push_back({v,d});
 		for(auto& p: g[v]) pq.push({-p.se, p.fi, v});
 	}
 }
@@ -1072,10 +1081,11 @@ void prim(){
 ##### LCA with Sparse Table
 
 ```c
-vi g[SZ];
+#define SZ 100010
+vector<int> g[SZ];
 int cont;
 int id[SZ]; // ultimo contador do vertice
-vector<pii> arr; // array pro lca
+vector< pair<int,int> > arr; // array pro lca
 
 void linear(int v, int ant, int altura){
 	id[v] = cont++;
@@ -1087,7 +1097,7 @@ void linear(int v, int ant, int altura){
 	}
 }
 
-pii st[SZ*2][21]; // must be [n][logn+1]
+pair<int,int> st[SZ*2][21]; // must be [n][logn+1]
 void buildtable(){
 	int n = arr.size(); int m = log2(n-1)+1;
 	FOR(i,0,n) st[i][0] = arr[i];	
@@ -1765,6 +1775,7 @@ O algoritmo de Rho é usado para fatorar numeros grandes. A função retorna um 
 
 ```c
 const int INF = 0x3f3f3f3f;
+#define ll long long
 ll modSum(ll a, ll b, ll c){
 	return (a+b)%c;
 }
