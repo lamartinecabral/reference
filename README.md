@@ -2244,6 +2244,7 @@ using namespace std;
 #define all(X) (X).begin(),(X).end()
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
+#define shift(x,i) ((i)<0 ? ((1LL*(x))>>(-i)) : ((1LL*(x))<<(i)))
 
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
