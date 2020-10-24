@@ -2237,14 +2237,14 @@ fi
 
 using namespace std;
 
-#define dbug(X) cerr<<#X<<" = "<<X<<endl
-#define _ <<" _ "<<
-#define print(X) {for(auto A:X)cout<<A<<' ';cout<<endl;}
-#define mset(V,X) memset(V,X,sizeof(V))
-#define all(X) (X).begin(),(X).end()
-#define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
-#define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
-#define shift(x,i) ((i)<0 ? ((1LL*(x))>>(-i)) : ((1LL*(x))<<(i)))
+#define int long long
+#ifdef int
+#define rint(x) scanf(" %lld",&(x))
+#else
+#define rint(x) scanf(" %d",&(x))
+#endif
+#define wint(x) printf("%lld ",(long long)(x))
+#define line printf("\n")
 
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
@@ -2252,16 +2252,21 @@ template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
 	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
+template<class T> ostream &operator<<(ostream &os, const set<T> &p){
+	for(auto x: p) os<<x<<' '; return os;}
+template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
+	for(auto x: p) os<<x<<' '; return os;}
+#define print(...) {for(auto A:{__VA_ARGS__})cout<<A<<' ';cout<<endl;}
+
+#define printcsv(V...) {for(auto A:{V})cout<<A<<',';cout<<endl;}
+#define dbug(V...) cout<<#V<<", = ";printcsv(V)
+
 #define FOR(X,L,R) for(int X=L;X<R;X++)
-#define int long long
-#define ll long long
-#define vi vector<int>
-#define pii pair<int,int>
-#define pb push_back
-#define mp make_pair
-#define fi first
-#define se second
-#define endl '\n'
+#define mset(V,X) memset(V,X,sizeof(V))
+#define all(X) (X).begin(),(X).end()
+#define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
+#define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
+#define shift(x,i) ( (i) < 0 ? (1LL*x)>>(-i) : (1LL*x)<<(i) )
 
 const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
