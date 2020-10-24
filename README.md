@@ -2246,6 +2246,12 @@ using namespace std;
 #define wint(x) printf("%lld ",(long long)(x))
 #define line printf("\n")
 
+void scan(){}
+template <typename T, typename... W> void scan(T& X, W&... Y){
+	rint(X); scan(Y...); }
+void scan(vector<int>& V){
+	for(auto &x: V) rint(x); }
+
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
 template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
