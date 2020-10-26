@@ -2265,7 +2265,7 @@ void scanint(int* B, int* E){
 	while(B!=E) SCANINT(*(B++)); }
 void scanint(vector<int>& V, int& TOTAL){
 	TOTAL = 0; for(auto &x: V){ SCANINT(x); TOTAL += x; } }
-void scanint(int* B, int* E, int TOTAL){
+void scanint(int* B, int* E, int& TOTAL){
 	TOTAL = 0; while(B!=E){ SCANINT(*(B++)); TOTAL += *(B-1); } }
 #define rint scanint
 
