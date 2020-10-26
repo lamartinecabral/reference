@@ -75,13 +75,23 @@
 ```c
 bool test(int m){}
 
-int bin(int L, int R){
+int binarySearch(int L, int R){ // [L,R]
 	while(L<=R){
 		int m = (L+R)/2;
-		test(m) ? L = m+1 : R = m-1;
+		if(test(m)) L = m+1;
+		else R = m-1;
 	}
 	return L; // primeiro false
 	return R; // ultimo true
+}
+
+int binarySearch2(int L, int R){ // [L,R)
+	while(L<R){
+		if(test(m)) L = m+1;
+		else R = m;
+	}
+	return L-1; // ultimo true
+	return L; // primeiro false
 }
 ```
 
