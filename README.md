@@ -2251,12 +2251,12 @@ template <typename T, typename... W> void scanint(T& X, W&... Y){
 	SCANINT(X); scanint(Y...); }
 void scanint(vector<int>& V){
 	for(auto &x: V) SCANINT(x); }
-void scanint(int V[], int N){
-	for(int _i=0; _i<N; ++_i) SCANINT(V[_i]); }
+void scanint(int* B, int* E){
+	while(B!=E) SCANINT(*(B++)); }
 void scanint(vector<int>& V, int& TOTAL){
 	TOTAL = 0; for(auto &x: V){ SCANINT(x); TOTAL += x; } }
-void scanint(int V[], int N, int TOTAL){
-	TOTAL = 0; for(int _i=0; _i<N; ++_i){ SCANINT(V[_i]); TOTAL += V[_i]; } }
+void scanint(int* B, int* E, int TOTAL){
+	TOTAL = 0; while(B!=E){ SCANINT(*(B++)); TOTAL += *(B-1); } }
 #define rint scanint
 
 void wint(){line;}
@@ -2264,8 +2264,8 @@ template <typename T, typename... W> void wint(T X, W... Y){
 	PRINTINT(X); wint(Y...); }
 void wint(vector<int>& V){
 	for(auto &x: V) PRINTINT(x); line; }
-void wint(int V[], int N){
-	for(int _i=0; _i<N; ++_i) PRINTINT(V[_i]); line; }
+void wint(int* B, int* E){
+	while(B!=E) PRINTINT(*(B++)); line; }
 
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
@@ -2282,12 +2282,20 @@ template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
 #define printcsv(V...) {for(auto A:{V})cerr<<A<<',';cerr<<endl;}
 #define dbug(V...) cerr<<#V<<", = ";printcsv(V)
 
-#define FOR(X,L,R) for(int X=L;X<R;++X)
+#define OR(X,Y) ((X)|(Y))
+#define AND(X,Y) ((X)&(Y))
+#define XOR(X,Y) ((X)^(Y))
+#define NOT(X) (!(X))
+#define flip(X) (~(X))
+#define shift(X,I) ((I)<0?(1LL*(X))>>(-(I)):(1LL*(X))<<(I))
+#define max(X,Y) ((X)>(Y)?(X):(Y))
+#define min(X,Y) ((X)<(Y)?(X):(Y))
+
 #define mset(V,X) memset(V,X,sizeof(V))
 #define all(X) (X).begin(),(X).end()
 #define upperb(V,X) (int)(upper_bound(all(V),(X))-V.begin())
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
-#define shift(x,i) ( (i) < 0 ? (1LL*x)>>(-i) : (1LL*x)<<(i) )
+#define FOR(X,L,R) for(int X=L;X<R;++X)
 
 #define ll long long
 #define vi vector<int>
@@ -2302,7 +2310,16 @@ const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 1e5+20;
 
+void solve(){
+	
+}
+
 signed main(){
+	
+	int t;/*
+	t = 1;//*/
+	cin>>t;//*/
+	while(t--) solve();
 
 	return 0;
 }
