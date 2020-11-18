@@ -87,6 +87,7 @@ int binarySearch(int L, int R){ // [L,R]
 
 int binarySearch2(int L, int R){ // [L,R)
 	while(L<R){
+		int m = (L+R)/2;
 		if(test(m)) L = m+1;
 		else R = m;
 	}
@@ -2263,10 +2264,6 @@ void scanint(vector<int>& V){
 	for(auto &x: V) SCANINT(x); }
 void scanint(int* B, int* E){
 	while(B!=E) SCANINT(*(B++)); }
-void scanint(vector<int>& V, int& TOTAL){
-	TOTAL = 0; for(auto &x: V){ SCANINT(x); TOTAL += x; } }
-void scanint(int* B, int* E, int& TOTAL){
-	TOTAL = 0; while(B!=E){ SCANINT(*(B++)); TOTAL += *(B-1); } }
 #define rint scanint
 
 void wint(){line;}
