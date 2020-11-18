@@ -991,7 +991,7 @@ ostream &operator<<(ostream &os, lll n){
 	int s = n<0 ? -1 : 1; n*=s;
 	long long x = 1e13; deque<long long> v;
 	while(n){ v.push_front(1LL*(n%x)); n/=x; }
-	for(int i:v){ os<<s*i; s*=s; } return os; }
+	for(long long i:v){ os<<s*i; s*=s; } return os; }
 ```
 
 # Grafos
@@ -2310,6 +2310,7 @@ template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
 #define ll long long
 #define vi vector<int>
 #define pii pair<int,int>
+#define vii vector<pii>
 #define pb push_back
 #define mp make_pair
 #define fi first
