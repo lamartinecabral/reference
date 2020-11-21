@@ -2258,7 +2258,7 @@ using namespace std;
 #define line printf("\n")
 
 void scanint(){}
-template <typename T, typename... W> void scanint(T& X, W&... Y){
+template <typename... T> void scanint(int& X, T&... Y){
 	SCANINT(X); scanint(Y...); }
 void scanint(vector<int>& V){
 	for(auto &x: V) SCANINT(x); }
@@ -2267,7 +2267,7 @@ void scanint(int* B, int* E){
 #define rint scanint
 
 void wint(){line;}
-template <typename T, typename... W> void wint(T X, W... Y){
+template <typename... T> void wint(int X, T... Y){
 	PRINTINT(X); wint(Y...); }
 void wint(vector<int>& V){
 	for(auto &x: V) PRINTINT(x); line; }
