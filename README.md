@@ -66,6 +66,7 @@
   - [Codeforces Filter Script](#codeforces-filter-script)
   - [Visual Code Settings](#visual-code-settings)
   - [Bash Script](#bash-script)
+  - [Fast IO](#fast-io)
   - [Template](#template)
 
 # Algoritmos
@@ -2227,6 +2228,54 @@ else
 		./${1%.*}.out < $2
 	fi
 fi
+```
+
+### Fast IO
+
+```c
+#ifdef _WIN32
+#define getchar_unlocked _getchar_nolock
+#define putchar_unlocked _putchar_nolock
+#endif
+int getint(){
+	int res = 0;
+	int signal = 1;
+	bool b = false;
+	while(1){
+		char c = getchar_unlocked();
+		if(c>='0' && c<='9'){
+			res = (res<<1) + (res<<3) + (c-'0');
+			b = true;
+		} else if(c == '-'){
+			signal *= -1;
+		} else {
+			if(b) return res*signal;
+		}
+	} return -1;
+}
+
+char _sint[12]; int _nint;
+void putint(int x){
+	bool signal = x<0;
+	if(signal){
+		x = (~x)+1;
+		putchar_unlocked('-');
+	}
+	int ant = x;
+	_nint = 0;
+	while(ant){
+		x = x/10;
+		_sint[_nint++] = '0'+ant-x*10;
+		ant = x;
+	}
+	while(_nint--){
+		putchar_unlocked(_sint[_nint]);
+	}
+	putchar_unlocked(' ');
+}
+```
+```
+ios_base::sync_with_stdio(0); cin.tie(NULL);
 ```
 
 ### Template
