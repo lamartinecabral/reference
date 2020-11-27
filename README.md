@@ -1923,12 +1923,13 @@ Equação da Circunferência (Centro (a,b) e Raio r)
 . (x-a)²+(y-b)²=r²
 
 Fórmulas para um triângulo com lados a,b,c
-.    Semi-Perímetro => p = (a+b+c)/2
-.              Area => A = sqrt(p(p-a)(p-b)(p-c))
-.              Area => A = bc.sin(alpha)/2
-.            Altura => h = 2A/b
-.     Raio Inscrito => r = A/p
-. Raio Curcunscrito => R = (abc)/(4A)
+.    Semi-Perímetro: p = (a+b+c)/2
+.              Area: A² = p(p-a)(p-b)(p-c)
+.              Area: A = bc.sin(alpha)/2
+.            Altura: h = 2A/b
+.     Raio Inscrito: r = A/p
+. Raio Curcunscrito: R = (abc)/(4A)
+.              Lado: a² = b²+c²-2bc.cos(alpha)
 ```
 
 ##### Pontos e Linhas
