@@ -1198,20 +1198,18 @@ void Topological(int n){
 
 ##### BFS
 ```
-vi g[SZ], ts;
+vi g[SZ];
 
-vi h[SZ]; int grau[SZ];
-void Topological(int n){
-	FOR(v,0,n) for(auto u: g[v]){
-		h[u].pb(v); grau[v]++;
-	}
+vi Topological(int n){
+	vi res; int grau[n] = {0};
+	FOR(v,0,n) for(auto u: g[v]) grau[v]++;
 	priority_queue<int> pq;
-	FOR(v,0,n) if(grau[v] == 0) pq.push(v);
+	FOR(v,0,n) if(grau[v] == 0) pq.push(-v);
 	while(pq.size()){
-		int v = pq.top(); pq.pop(); ts.pb(v);
-		for(auto u: h[v]) if(--grau[u] == 0) pq.push(u);
+		int v = -pq.top(); pq.pop(); res.pb(v);
+		for(auto u: g[v]) if(--grau[u] == 0) pq.push(-u);
 	}
-	reverse(all(ts));
+	return res;
 }
 ```
 
