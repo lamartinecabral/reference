@@ -59,6 +59,7 @@
   - [Matrizes](#matrizes)
   - [Miller-Rabin's Prime Check & Pollard Rho's Algorithm](#miller-rabins-prime-check--pollard-rhos-algorithm)
   - [Fast Fourier Transform (FFT)](#fast-fourier-transform-fft)
+  - [Congruência Linear](#congruência-linear)
   - [Teorema do Resto Chinês](#teorema-do-resto-chinês)
 - [**Geometria**](#geometria)
   - [Pontos e Linhas](#pontos-e-linhas)
@@ -1912,6 +1913,22 @@ int main(){
 	} printf("\n");
 	
 	return 0;
+}
+```
+
+### Congruência Linear
+
+```c
+// Ax = B mod M
+int A,B,M;
+int c = __gcd(A,B,M);
+int a = A/c; int b = B/c; int m = M/c;
+// solve ax = b mod m
+if(__gcd(a,m) != 1) cout<<"No solution"<<endl;
+else{
+	// x = b/a mod m
+	x = (b*fexp(a,phi(m)-1,m))%m;
+	cout<<"Solution: "<<x<<endl;
 }
 ```
 
