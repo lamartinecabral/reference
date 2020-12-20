@@ -59,6 +59,7 @@
   - [Matrizes](#matrizes)
   - [Miller-Rabin's Prime Check & Pollard Rho's Algorithm](#miller-rabins-prime-check--pollard-rhos-algorithm)
   - [Fast Fourier Transform (FFT)](#fast-fourier-transform-fft)
+  - [Teorema do Resto Chinês](#teorema-do-resto-chinês)
 - [**Geometria**](#geometria)
   - [Pontos e Linhas](#pontos-e-linhas)
   - [Biblioteca Completa](#biblioteca-completa)
@@ -1911,6 +1912,84 @@ int main(){
 	} printf("\n");
 	
 	return 0;
+}
+```
+
+### Teorema do Resto Chinês
+
+```c
+ll fexp(ll a, ll b, ll c){
+	ll res = 1; while(b){
+		if(b & 1) res = (res*a)%c;
+		a = (a*a)%c; b >>= 1;
+	} return res;
+}
+
+map<int,int> fatorar(int n){
+	map<int,int> f;
+	for(int i=2; i*i <= n; i++)
+		while(n%i==0){
+			f[i]++; n/=i; }
+	if(n > 1) f[n]++;
+	return f;
+}
+
+int phi(int n){
+	auto f = fatorar(n);
+	int res = 1;
+	for(auto x: f){
+		int fator = x.fi; int exp = x.se;
+		res *= round(pow(fator,exp-1));
+		res *= fator-1;
+	}
+	return res;
+}
+
+/*
+
+gcd(p[i].se, p[j].se) == 1 (all coprimes)
+
+x = p[0].fi mod p[0].se
+x = p[1].fi mod p[1].se
+x = p[2].fi mod p[2].se
+...
+x = p[n].fi mod p[n].se
+
+FIND x
+
+solve:
+x = X mod M
+where {
+	M = p[0].se * p[1].se * p[2].se * ... * p[n].se (product of all p[i].se)
+	X = p[0].fi*A[0]*B[0] + p[1].fi*A[1]*B[1] + ... + p[n].fi*A[n]*B[n]
+	where {
+		A[i] = M/p[i].se (product of all p[j].se where j != i)
+		B[i] = A[i]^(-1) mod p[i].se
+	}
+}
+
+source: pt.wikipedia
+*/
+
+void solve(){
+	int n = 4;
+	pair<int,int> p[n];
+	p[0] = {3,5};
+	p[1] = {5,13};
+	p[2] = {7,29};
+	p[3] = {1,41};
+	
+	ll M = 1;
+	for(int i=0; i<n; i++) M *= p[i].se;
+	ll A[n];
+	for(int i=0; i<n; i++) A[i] = M/p[i].se;
+	ll B[n];
+	for(int i=0; i<n; i++) B[i] = fexp(A[i], phi(p[i].se)-1, p[i].se );
+	ll X = 0;
+	for(int i=0; i<n; i++) X += p[i].fi*A[i]*B[i];
+
+	int x = X%M;
+	cout<<x<<endl;
 }
 ```
 
