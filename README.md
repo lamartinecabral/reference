@@ -2392,32 +2392,7 @@ ios_base::sync_with_stdio(0); cin.tie(NULL);
 
 using namespace std;
 
-#define int long long
-#ifdef int
-#define SCANINT(x) scanf(" %lld",&(x))
-#else
-#define SCANINT(x) scanf(" %d",&(x))
-#endif
-#define PRINTINT(x) printf("%lld ",(long long)(x))
-#define line printf("\n")
-
-void scanint(){}
-template <typename... T> void scanint(int& X, T&... Y){
-	SCANINT(X); scanint(Y...); }
-void scanint(vector<int>& V){
-	for(auto &x: V) SCANINT(x); }
-void scanint(int* B, int* E){
-	while(B!=E) SCANINT(*(B++)); }
-#define rint scanint
-
-void wint(){line;}
-template <typename... T> void wint(int X, T... Y){
-	PRINTINT(X); wint(Y...); }
-void wint(vector<int>& V){
-	for(auto &x: V) PRINTINT(x); line; }
-void wint(int* B, int* E){
-	while(B!=E) PRINTINT(*(B++)); line; }
-
+// use cout with pair,array,vector,set,map
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
 template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
@@ -2428,10 +2403,13 @@ template<class T> ostream &operator<<(ostream &os, const set<T> &p){
 	for(auto x: p) os<<x<<' '; return os;}
 template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
 	for(auto x: p) os<<x<<' '; return os;}
-#define print(V...) {for(auto A:{V})cout<<A<<' ';cout<<endl;}
 
-#define printcsv(V...) {for(auto A:{V})cerr<<A<<',';cerr<<endl;}
-#define dbug(V...) cerr<<#V<<", = ";printcsv(V)
+// use print with variadic arguments and static array
+template<class T> void print(T X){cout<<X<<endl;}
+template <class T, class... W> void print(T X, W... Y){
+	cout<<X<<' '; print(Y...); }
+template<class T> void print(T* B, T* E){
+	while(B!=E) cout<<*(B++)<<' '; cout<<endl; }
 
 #define OR(X,Y) ((X)|(Y))
 #define AND(X,Y) ((X)&(Y))
@@ -2448,10 +2426,10 @@ template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
 #define lowerb(V,X) (int)(lower_bound(all(V),(X))-V.begin())
 #define FOR(X,L,R) for(int X=L;X<R;++X)
 
+#define int long long
 #define ll long long
 #define vi vector<int>
 #define pii pair<int,int>
-#define vii vector<pii>
 #define pb push_back
 #define mp make_pair
 #define fi first
@@ -2462,15 +2440,18 @@ const double EPS = 1e-9, PI = acos(-1);
 const ll LINF = 0x3f3f3f3f3f3f3f3f, mod = 1e9+7;
 const int INF = 0x3f3f3f3f, SZ = 1e5+20;
 
-void solve(){
+int solve(){
 	
+	return 0;
 }
 
 signed main(){
+	ios_base::sync_with_stdio(false);cin.tie(NULL);
 	
-	int t;/*
-	t = 1;//*/
-	cin>>t;//*/
+	int t;
+	/*
+	cin>>t; //*/
+	t = 1; //*/
 	while(t--) solve();
 
 	return 0;
