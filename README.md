@@ -2395,14 +2395,14 @@ using namespace std;
 // use cout with pair,array,vector,set,map
 template<class T, class W> ostream &operator<<(ostream &os, const pair<T,W> &p){
 	return os<<"("<<p.first<<","<<p.second<<")";}
-template<class T> ostream &operator<<(ostream &os, const array<T,3> &p){
-	return os<<"("<<p[0]<<","<<p[1]<<","<<p[2]<<")";}
+template<class T, size_t W> ostream &operator<<(ostream &os, const array<T,W> &p){
+	os<<'(';for(int i=0;i<W;)os<<(i?",":"")<<p[i++]; return os<<')';}
 template<class T> ostream &operator<<(ostream &os, const vector<T> &p){
-	for(auto x: p) os<<x<<' '; return os;}
+	int b=0;for(auto x:p)os<<(b++?" ":"")<<x; return os;}
 template<class T> ostream &operator<<(ostream &os, const set<T> &p){
-	for(auto x: p) os<<x<<' '; return os;}
+	int b=0;for(auto x:p)os<<(b++?" ":"")<<x; return os;}
 template<class T, class W> ostream &operator<<(ostream &os, const map<T,W> &p){
-	for(auto x: p) os<<x<<' '; return os;}
+	int b=0;for(auto x:p)os<<(b++?" ":"")<<x; return os;}
 
 // use print with variadic arguments and static array
 template<class T> void print(T X){cout<<X<<endl;}
@@ -2417,8 +2417,8 @@ template<class T> void print(T* B, T* E){
 #define NOT(X) (!(X))
 #define flip(X) (~(X))
 #define shift(X,I) ((I)<0?(1LL*(X))>>(-(I)):(1LL*(X))<<(I))
-#define max(X,Y) ((X)>(Y)?(X):(Y))
-#define min(X,Y) ((X)<(Y)?(X):(Y))
+#define mmax(X,Y) ((X)>(Y)?(X):(Y))
+#define mmin(X,Y) ((X)<(Y)?(X):(Y))
 
 #define mset(V,X) memset(V,X,sizeof(V))
 #define all(X) (X).begin(),(X).end()
