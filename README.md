@@ -182,10 +182,22 @@ void upd(int i, int k){
 ### Union Find
 
 ```c
-int pai[100010];
+struct Dsu{
+	vector<int> g;
 
-int find(int i){ return pai[i] == 0 ? i : pai[i] = find(pai[i]); }
-void uni(int i, int j){ pai[find(i)] = find(j); }
+	Dsu(int n){
+		g = vector<int>(n);
+		for(int i=0; i<n; i++) g[i] = i;
+	}
+
+	int find(int i){
+		return group[i] == i ? i : g[i] = find(g[i]);
+	}
+
+	void union(int i, int j){
+		g[find(i)] = find(j);
+	}
+};
 ```
 
 ### Sparse Table
